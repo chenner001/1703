@@ -182,7 +182,7 @@
 
     <!-- 底部居中按钮：点击进入1703 跳转到 https://github.com/chenner001/1703/blob/main/1703%E5%AE%A4.html -->
     <div class="button-wrapper">
-        <a href="https://123.com" class="enter-button" target="_blank" rel="noopener noreferrer">点击进入1703</a>
+        <a href="https://github.com/chenner001/1703/blob/main/1703%E5%AE%A4.html" class="enter-button" target="_blank" rel="noopener noreferrer">点击进入1703</a>
     </div>
 </div>
 <!-- 极简留白脚注，不干扰主要内容 -->
