@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>邮箱 · 苏晚晴@kiki.com</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fc;
+            font-family: -apple-system, 'Segoe UI', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .mail-container {
+            max-width: 880px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            border: 1px solid #edf0f5;
+        }
+
+        .mail-header {
+            padding: 24px 28px 16px;
+            border-bottom: 1px solid #eef2f8;
+        }
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .mail-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #1e2f3e;
+            letter-spacing: -0.3px;
+        }
+        .mail-title span {
+            font-weight: 400;
+            color: #8b9bb0;
+            font-size: 0.85rem;
+        }
+        .user-email {
+            font-size: 0.75rem;
+            color: #9aaebf;
+            background: #f8fafd;
+            padding: 6px 14px;
+            border-radius: 40px;
+        }
+        .inbox-info {
+            display: flex;
+            gap: 24px;
+            font-size: 0.7rem;
+            color: #7c8f9e;
+        }
+
+        .mail-list {
+            padding: 8px 0;
+        }
+        .mail-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 28px;
+            border-bottom: 1px solid #f0f3f9;
+            transition: background 0.1s;
+            cursor: default;
+        }
+        .mail-item:hover {
+            background: #fafcff;
+        }
+        .mail-check {
+            width: 28px;
+            color: #cbd6e3;
+            font-size: 0.7rem;
+        }
+        .mail-star {
+            width: 32px;
+            color: #e2e6ed;
+            font-size: 0.8rem;
+        }
+        .mail-sender {
+            width: 140px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c3f4f;
+        }
+        .mail-subject {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #3c5568;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 16px;
+        }
+        .mail-subject .highlight {
+            font-weight: 500;
+            color: #1f3b4a;
+        }
+        .mail-date {
+            width: 85px;
+            font-size: 0.7rem;
+            color: #9aadc2;
+            text-align: right;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mail-modal {
+            background: #ffffff;
+            border-radius: 28px;
+            width: 520px;
+            max-width: 90vw;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: modalSlide 0.2s ease;
+        }
+        @keyframes modalSlide {
+            from { transform: translateY(12px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            padding: 20px 24px 12px;
+            border-bottom: 1px solid #eff2f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e2f3e;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #9aaebf;
+            transition: 0.1s;
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+        }
+        .close-modal:hover {
+            background: #f0f4fa;
+            color: #5a6e82;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .email-detail-sender {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c4a5e;
+        }
+        .email-detail-date {
+            font-size: 0.65rem;
+            color: #a5bbd0;
+            margin-bottom: 20px;
+        }
+        .email-detail-subject {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: #1a3a48;
+        }
+        .email-detail-content {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #3a5568;
+            white-space: pre-wrap;
+            background: #fbfdff;
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid #f0f2f5;
+        }
+
+        .mail-footer {
+            background: #fafcff;
+            padding: 14px 28px;
+            border-top: 1px solid #f0f3f9;
+            font-size: 0.65rem;
+            color: #9aadc2;
+            text-align: center;
+        }
+
+        @media (max-width: 680px) {
+            .mail-sender {
+                width: 100px;
+            }
+            .mail-item {
+                padding: 14px 20px;
+            }
+            .mail-subject {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="mail-container">
+    <div class="mail-header">
+        <div class="logo-area">
+            <div class="mail-title">
+                收件箱 <span>· 苏晚晴</span>
+            </div>
+            <div class="user-email">
+                suwanqing@kiki.com
+            </div>
+        </div>
+        <div class="inbox-info">
+            <span>📬 共 12 封邮件</span>
+        </div>
+    </div>
+
+    <div class="mail-list">
+        <!-- 工作邮件 1 -->
+        <div class="mail-item" data-mail-id="1" data-sender="产品部 · 林总监" data-subject="Q2产品规划会议纪要" data-date="2026-03-12" data-content="苏晚晴，请查收本次会议纪要。下周三前需要提交用户调研报告。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">产品部 · 林总监</div>
+            <div class="mail-subject">Q2产品规划会议纪要</div>
+            <div class="mail-date">3月12日</div>
+        </div>
+
+        <!-- 工作邮件 2 -->
+        <div class="mail-item" data-mail-id="2" data-sender="HR · 陈思敏" data-subject="关于离职手续的补充说明" data-date="2026-03-05" data-content="晚晴，离职流程已审批完成。请确认最后工作日及社保转移事宜。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">HR · 陈思敏</div>
+            <div class="mail-subject">关于离职手续的补充说明</div>
+            <div class="mail-date">3月5日</div>
+        </div>
+
+        <!-- 工作邮件 3 -->
+        <div class="mail-item" data-mail-id="3" data-sender="财务部 · 王会计" data-subject="2月薪资明细及个税申报" data-date="2026-03-01" data-content="您好，附件为2月薪资单，请核对。如有疑问请回复。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">财务部 · 王会计</div>
+            <div class="mail-subject">2月薪资明细及个税申报</div>
+            <div class="mail-date">3月1日</div>
+        </div>
+
+        <!-- 工作邮件 4 -->
+        <div class="mail-item" data-mail-id="4" data-sender="项目组 · Jason" data-subject="Re: 用户反馈汇总表" data-date="2026-02-28" data-content="晚晴，上周的数据已经汇总好，辛苦跟进一下。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">项目组 · Jason</div>
+            <div class="mail-subject">Re: 用户反馈汇总表</div>
+            <div class="mail-date">2月28日</div>
+        </div>
+
+        <!-- 工作邮件 5 -->
+        <div class="mail-item" data-mail-id="5" data-sender="设计部 · 周薇" data-subject="品牌视觉规范更新V2.3" data-date="2026-02-20" data-content="晚晴，最新的品牌规范已更新，请查收附件。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">设计部 · 周薇</div>
+            <div class="mail-subject">品牌视觉规范更新V2.3</div>
+            <div class="mail-date">2月20日</div>
+        </div>
+
+        <!-- 工作邮件 6 -->
+        <div class="mail-item" data-mail-id="7" data-sender="行政部 · 刘姐" data-subject="办公室搬迁通知" data-date="2026-01-10" data-content="各位同事，下月起办公室将搬迁至新地址，详情见附件。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">行政部 · 刘姐</div>
+            <div class="mail-subject">办公室搬迁通知</div>
+            <div class="mail-date">1月10日</div>
+        </div>
+
+        <!-- 工作邮件 7 -->
+        <div class="mail-item" data-mail-id="8" data-sender="客户 · 李总" data-subject="合作意向咨询" data-date="2025-12-20" data-content="苏经理，关于明年的合作方案，想约个时间详谈。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">客户 · 李总</div>
+            <div class="mail-subject">合作意向咨询</div>
+            <div class="mail-date">12月20日</div>
+        </div>
+
+        <!-- 工作邮件 8 -->
+        <div class="mail-item" data-mail-id="9" data-sender="技术部 · 张昊" data-subject="API接口文档更新" data-date="2025-12-10" data-content="请查收最新的接口文档，有调整的地方已标红。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">技术部 · 张昊</div>
+            <div class="mail-subject">API接口文档更新</div>
+            <div class="mail-date">12月10日</div>
+        </div>
+
+        <!-- 工作邮件 9 -->
+        <div class="mail-item" data-mail-id="10" data-sender="市场部 · 赵茜" data-subject="Q1市场活动排期" data-date="2025-12-05" data-content="晚晴，Q1的活动排期初稿已出，请确认资源支持。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">市场部 · 赵茜</div>
+            <div class="mail-subject">Q1市场活动排期</div>
+            <div class="mail-date">12月5日</div>
+        </div>
+
+        <!-- 工作邮件 10 -->
+        <div class="mail-item" data-mail-id="11" data-sender="外包团队 · 陈实" data-subject="项目进度周报" data-date="2025-11-28" data-content="本周已完成需求评审，下周进入开发阶段。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">外包团队 · 陈实</div>
+            <div class="mail-subject">项目进度周报</div>
+            <div class="mail-date">11月28日</div>
+        </div>
+
+        <!-- 工作邮件 11 -->
+        <div class="mail-item" data-mail-id="12" data-sender="公司公告" data-subject="年会安排通知" data-date="2025-11-20" data-content="2026年年会将于1月18日举办，请各部门准备节目。">
+            <div class="mail-check">○</div>
+            <div class="mail-star">☆</div>
+            <div class="mail-sender">公司公告</div>
+            <div class="mail-subject">年会安排通知</div>
+            <div class="mail-date">11月20日</div>
+        </div>
+
+        <!-- 无名人小镇论坛验证码邮件 - 已移动到最下方 -->
+        <div class="mail-item" data-mail-id="6" data-sender="no-reply@townofnoname.com" data-subject="【无名人小镇】您的验证码" data-date="2026-01-15" data-content="尊敬的 moon，欢迎注册无名人小镇。您的验证码是：847362。请于10分钟内完成验证。如非本人操作，请忽略此邮件。">
+            <div class="mail-check">●</div>
+            <div class="mail-star">★</div>
+            <div class="mail-sender" style="color:#4c6f8c;">无名人小镇</div>
+            <div class="mail-subject"><span class="highlight">【无名人小镇】您的验证码</span></div>
+            <div class="mail-date">1月15日</div>
+        </div>
+    </div>
+
+    <div class="mail-footer">
+        🧾 共 12 封邮件 · 最后同步 2026-03-27
+    </div>
+</div>
+
+<!-- 邮件详情弹窗 -->
+<div id="mailModal" class="modal-overlay">
+    <div class="mail-modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">邮件详情</h3>
+            <button class="close-modal" id="closeModalBtn">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 动态内容 -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const mailItems = document.querySelectorAll('.mail-item');
+    const modal = document.getElementById('mailModal');
+    const modalBody = document.getElementById('modalBody');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    mailItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const sender = item.getAttribute('data-sender') || item.querySelector('.mail-sender')?.innerText || '未知发件人';
+            const subject = item.querySelector('.mail-subject')?.innerText || item.getAttribute('data-subject') || '无主题';
+            const date = item.getAttribute('data-date') || item.querySelector('.mail-date')?.innerText || '未知日期';
+            const content = item.getAttribute('data-content') || '暂无邮件内容。';
+
+            const contentHtml = `<div class="email-detail-sender">📧 ${sender}</div>
+                               <div class="email-detail-date">${date}</div>
+                               <div class="email-detail-subject">📌 ${subject}</div>
+                               <div class="email-detail-content">${content.replace(/\n/g, '<br>')}</div>`;
+            
+            modalBody.innerHTML = contentHtml;
+            modal.classList.add('active');
+        });
+    });
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>gooooleee · 极简搜索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Roboto, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;  /* 内容从顶部开始排列 */
+            padding: 24px;
+        }
+
+        /* 浏览记录固定在页面右上角 */
+        .history-link {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            font-size: 0.85rem;
+            color: #1c1c1e;
+            text-decoration: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid #dfe1e5;
+            background: #ffffff;
+            transition: background 0.1s, border-color 0.1s;
+            z-index: 100;
+        }
+        .history-link:hover {
+            background: #f5f5f7;
+            border-color: #c0c4cc;
+        }
+
+        /* 极简容器 - 内容位于页面三分之一处 */
+        .search-container {
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+            margin-top: 33vh;  /* 垂直方向约三分之一处 */
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo - 极简风格 gooooleee */
+        .logo {
+            font-size: 4rem;
+            font-weight: 520;
+            letter-spacing: -1px;
+            color: #202124;
+            margin-bottom: 28px;
+            font-family: inherit;
+        }
+        .logo span {
+            font-weight: 400;
+            color: #4285f4;
+        }
+
+        /* 搜索框区域 */
+        .search-box {
+            width: 100%;
+            background: #fff;
+            border: 1px solid #dfe1e5;
+            border-radius: 28px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: box-shadow 0.1s, border-color 0.1s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .search-box:hover,
+        .search-box:focus-within {
+            border-color: #c0c4cc;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+        .search-icon {
+            color: #9aa0a6;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            padding: 12px 0;
+            background: transparent;
+            font-family: inherit;
+        }
+        .search-input::placeholder {
+            color: transparent;
+        }
+        .search-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #4285f4;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 24px;
+            transition: background 0.1s;
+            font-weight: 450;
+        }
+        .search-btn:hover {
+            background: #f0f3fe;
+        }
+
+        @media (max-width: 560px) {
+            .logo { font-size: 3rem; }
+            .search-box { padding: 6px 16px; }
+            .search-input { font-size: 0.9rem; }
+            .search-container {
+                margin-top: 30vh;  /* 移动端稍作调整，仍保持三分之一附近 */
+            }
+            .history-link {
+                top: 16px;
+                right: 16px;
+                font-size: 0.75rem;
+                padding: 4px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 浏览记录固定在右上角 -->
+    <a href="搜索历史.html" target="_blank" class="history-link">浏览记录</a>
+
+    <div class="search-container">
+        <div class="logo">gooo<span>o</span>leee</div>
+
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <div class="search-icon">🔍</div>
+            <input type="text" id="searchInput" class="search-input" placeholder="" autocomplete="off">
+            <button id="searchBtn" class="search-btn">搜索</button>
+        </div>
+    </div>
+
+    <script>
+        // 关键词到页面的映射
+        const urlMap = {
+            "闲鱼": "闲鱼.html",
+            "深蓝科技": "深蓝科技.html",
+            "无名人小镇": "无名人小镇论坛.html",
+            "小蜗宠物生活馆": "小蜗宠物生活馆.html"
+        };
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // 执行搜索：获取输入值，匹配映射，在新标签页打开
+        function performSearch() {
+            let keyword = searchInput.value.trim();
+            if (keyword === "") {
+                alert("请输入搜索内容");
+                return;
+            }
+            
+            // 查找映射
+            let targetUrl = urlMap[keyword];
+            if (targetUrl) {
+                window.open(targetUrl, '_blank');
+            } else {
+                alert(`未找到“${keyword}”对应的站点，请尝试：闲鱼、深蓝科技、无名人小镇、小蜗宠物生活馆`);
+            }
+        }
+
+        // 绑定事件
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>

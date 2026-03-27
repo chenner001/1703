@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>深蓝科技 · 群青极简</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fc;
+            font-family: -apple-system, 'Segoe UI', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            color: #1f2e4a;
+            line-height: 1.5;
+        }
+
+        /* 主容器 */
+        .site-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* 头部导航 - 群青背景 */
+        .header {
+            background: #1e3a8a;
+            margin: 0 -32px;
+            padding: 28px 32px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+        .logo p {
+            font-size: 0.7rem;
+            color: #c7d9f0;
+            margin-top: 4px;
+        }
+        .nav {
+            display: flex;
+            gap: 32px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #e6edfc;
+            font-size: 0.85rem;
+            font-weight: 450;
+            transition: color 0.1s;
+        }
+        .nav a:hover {
+            color: #ffffff;
+        }
+
+        /* 公司介绍区域 - 白色卡片 + 群青强调线，含图片 */
+        .company-section {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 48px 40px;
+            margin: 40px 0 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border-left: 6px solid #1e3a8a;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+        }
+        .company-text {
+            flex: 2;
+            min-width: 260px;
+        }
+        .company-image {
+            flex: 1;
+            min-width: 200px;
+        }
+        .company-img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            object-fit: cover;
+        }
+        .company-title {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        .company-desc {
+            font-size: 1rem;
+            color: #2c4a6e;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .company-stats {
+            display: flex;
+            gap: 48px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            border-top: 1px solid #eef2f8;
+            padding-top: 28px;
+        }
+        .stat-item {
+            text-align: left;
+        }
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: #6f8faa;
+            letter-spacing: 0.3px;
+        }
+
+        /* 业务板块 */
+        .services-section {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 48px 40px;
+            margin: 32px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border-right: 6px solid #1e3a8a;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #1e3a8a;
+            margin-bottom: 32px;
+            letter-spacing: -0.3px;
+            border-left: 4px solid #1e3a8a;
+            padding-left: 18px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 28px;
+        }
+        .service-card {
+            background: #fbfdff;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #eef2f8;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .service-card:hover {
+            border-color: #cddfef;
+            transform: translateY(-2px);
+        }
+        .service-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        .service-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+        .service-desc {
+            font-size: 0.8rem;
+            color: #5c6f8c;
+            line-height: 1.45;
+        }
+
+        /* 人员介绍区域 */
+        .team-section {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 48px 40px;
+            margin: 32px 0 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border-top: 4px solid #1e3a8a;
+        }
+
+        .team-tabs {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid #e9eef3;
+            margin-bottom: 36px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #6f8faa;
+            cursor: pointer;
+            transition: 0.1s;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+            font-weight: 600;
+        }
+        .tab-btn:hover {
+            color: #1e3a8a;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+        }
+        .member-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid #eef2f8;
+            transition: box-shadow 0.2s, transform 0.1s;
+        }
+        .member-card:hover {
+            box-shadow: 0 12px 28px -12px rgba(30, 58, 138, 0.12);
+            transform: translateY(-2px);
+            border-color: #d4e0ec;
+        }
+        .member-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #eef3fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 400;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+        .member-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 6px;
+        }
+        .member-title {
+            font-size: 0.75rem;
+            color: #6f8faa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
+        .member-bio {
+            font-size: 0.8rem;
+            color: #4a627a;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+        .employee-dossier {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eef2f8;
+            font-size: 0.7rem;
+            color: #5e7c9c;
+            background: #fafcff;
+            border-radius: 16px;
+            padding: 14px;
+        }
+        .dossier-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .dossier-label {
+            font-weight: 500;
+            color: #2c5a7a;
+            min-width: 70px;
+        }
+        .dossier-value {
+            color: #2c4a6e;
+            font-family: monospace;
+        }
+        .status-active {
+            color: #2c7a4d;
+        }
+        .status-inactive {
+            color: #b1624b;
+        }
+        .member-email {
+            font-size: 0.7rem;
+            color: #1e3a8a;
+            background: #eef3fc;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-family: monospace;
+            margin-top: 12px;
+        }
+
+        .footer {
+            background: #1e3a8a;
+            margin: 0 -32px;
+            padding: 32px 32px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #c7d9f0;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 680px) {
+            .site-container {
+                padding: 0 20px;
+            }
+            .header {
+                margin: 0 -20px;
+                padding: 20px;
+            }
+            .footer {
+                margin: 0 -20px;
+            }
+            .company-section {
+                flex-direction: column;
+            }
+            .company-section, .services-section, .team-section {
+                padding: 28px 24px;
+            }
+            .company-stats {
+                gap: 28px;
+            }
+            .team-tabs {
+                gap: 16px;
+                overflow-x: auto;
+            }
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <div class="header">
+        <div class="logo">
+            <h1>深蓝科技</h1>
+            <p>DEEPBLUE · 数据驱动未来</p>
+        </div>
+        <div class="nav">
+            <a href="#">首页</a>
+            <a href="#">公司介绍</a>
+            <a href="#">核心团队</a>
+            <a href="#">加入我们</a>
+        </div>
+    </div>
+
+    <!-- 公司介绍区块 + 真实图片 -->
+    <div class="company-section">
+        <div class="company-text">
+            <div class="company-title">严谨 · 专注 · 创新</div>
+            <div class="company-desc">
+                深蓝科技成立于2018年，专注于企业级数据智能与信息安全解决方案。我们为金融、医疗及公共服务领域提供高可靠性的数字基础设施，以工程化的严谨与对技术的敬畏，构建可信的数字化未来。公司总部位于杭州，并在北京、深圳设有研发中心，目前服务超过200家行业客户。
+            </div>
+            <div class="company-stats">
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">企业客户</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">12项</div>
+                    <div class="stat-label">技术专利</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.99%</div>
+                    <div class="stat-label">系统可用性</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5年</div>
+                    <div class="stat-label">行业深耕</div>
+                </div>
+            </div>
+        </div>
+        <div class="company-image">
+            <img class="company-img" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop" alt="深蓝科技办公环境">
+        </div>
+    </div>
+
+    <!-- 业务板块 + 真实图片 -->
+    <div class="services-section">
+        <div class="section-title">核心业务</div>
+        <div class="services-grid">
+            <div class="service-card">
+                <img class="service-img" src="https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop" alt="零信任安全">
+                <div class="service-title">零信任安全架构</div>
+                <div class="service-desc">基于身份与持续验证的动态访问控制，为政企客户构建新一代安全边界。</div>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop" alt="隐私计算">
+                <div class="service-title">隐私计算平台</div>
+                <div class="service-desc">联邦学习与多方安全计算，实现数据“可用不可见”，合规释放数据价值。</div>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.pexels.com/photos/3862632/pexels-photo-3862632.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop" alt="数据中台">
+                <div class="service-title">数据智能中台</div>
+                <div class="service-desc">一站式数据治理与AI分析引擎，赋能企业数字化转型决策。</div>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.pexels.com/photos/4050312/pexels-photo-4050312.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop" alt="数字身份">
+                <div class="service-title">可信数字身份</div>
+                <div class="service-desc">基于区块链的去中心化身份认证，构筑数字世界的信任基石。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人员介绍区块 -->
+    <div class="team-section">
+        <div class="section-title">核心团队</div>
+        <div class="team-tabs">
+            <button class="tab-btn active" data-category="all">全部</button>
+            <button class="tab-btn" data-category="executive">管理层</button>
+            <button class="tab-btn" data-category="product">产品与运营</button>
+            <button class="tab-btn" data-category="engineering">技术研发</button>
+        </div>
+        <div class="team-grid" id="teamGrid"></div>
+    </div>
+
+    <div class="footer">
+        © 2026 深蓝科技 · 保留一切权利 | 严谨务实，行稳致远
+    </div>
+</div>
+
+<script>
+    const teamMembers = [
+        {
+            id: 1,
+            name: "陈正明",
+            title: "创始人 & CEO",
+            bio: "前阿里云资深技术专家，20年企业服务经验，主导过多个国家级数据平台建设。深蓝科技创始人，负责公司整体战略与治理。",
+            email: "chen.zhengming@deepblue.com",
+            category: "executive",
+            avatar: "陈",
+            employeeId: "DB-2018-001",
+            joinDate: "2018年4月",
+            workStatus: "在职",
+            department: "总裁办公室",
+            education: "浙江大学 计算机科学与技术 硕士",
+            phoneExt: "8001"
+        },
+        {
+            id: 2,
+            name: "林若溪",
+            title: "CTO",
+            bio: "人工智能博士，曾任职于微软亚洲研究院，负责公司整体技术架构与前沿探索。主导多项核心数据安全技术研发。",
+            email: "lin.ruoxi@deepblue.com",
+            category: "executive",
+            avatar: "林",
+            employeeId: "DB-2019-023",
+            joinDate: "2019年11月",
+            workStatus: "在职",
+            department: "技术研发中心",
+            education: "清华大学 计算机科学与技术 博士",
+            phoneExt: "8012"
+        },
+        {
+            id: 3,
+            name: "苏晚晴",
+            title: "产品总监 · 信息安全方向",
+            bio: "负责数据安全与隐私保护产品线。主导设计零信任安全框架，拥有CISSP、CISM等多项行业认证。严谨务实，注重产品细节与安全合规。",
+            email: "suwanqing@kiki.com",
+            category: "product",
+            avatar: "苏",
+            employeeId: "DB-2021-027",
+            joinDate: "2021年8月15日",
+            workStatus: "已离职",
+            department: "产品与解决方案部",
+            education: "复旦大学 信息安全 硕士",
+            phoneExt: "8035"
+        },
+        {
+            id: 4,
+            name: "吴仲明",
+            title: "资深算法专家",
+            bio: "主攻联邦学习与隐私计算，发表顶会论文6篇，负责核心数据安全引擎研发。曾获ACM中国新星奖提名。",
+            email: "wu.zhongming@deepblue.com",
+            category: "engineering",
+            avatar: "吴",
+            employeeId: "DB-2022-089",
+            joinDate: "2022年3月",
+            workStatus: "在职",
+            department: "算法实验室",
+            education: "南京大学 计算机科学 博士",
+            phoneExt: "8051"
+        }
+    ];
+
+    let currentCategory = "all";
+
+    function renderTeam(category) {
+        const filtered = category === "all" ? teamMembers : teamMembers.filter(m => m.category === category);
+        const grid = document.getElementById("teamGrid");
+        if (!grid) return;
+        
+        grid.innerHTML = filtered.map(member => {
+            const statusClass = member.workStatus === "在职" ? "status-active" : "status-inactive";
+            const dossierHtml = `
+                <div class="employee-dossier">
+                    <div class="dossier-row">
+                        <span class="dossier-label">📋 工号</span>
+                        <span class="dossier-value">${member.employeeId}</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-label">📅 入职日期</span>
+                        <span class="dossier-value">${member.joinDate}</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-label">🏢 部门</span>
+                        <span class="dossier-value">${member.department}</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-label">🎓 教育背景</span>
+                        <span class="dossier-value">${member.education}</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-label">📞 内线</span>
+                        <span class="dossier-value">${member.phoneExt}</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-label">✅ 状态</span>
+                        <span class="dossier-value ${statusClass}">${member.workStatus}</span>
+                    </div>
+                </div>
+                <div class="member-email">${member.email}</div>
+            `;
+            return `
+                <div class="member-card">
+                    <div class="member-avatar">${member.avatar}</div>
+                    <div class="member-name">${member.name}</div>
+                    <div class="member-title">${member.title}</div>
+                    <div class="member-bio">${member.bio}</div>
+                    ${dossierHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function bindTabs() {
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.getAttribute('data-category');
+                renderTeam(currentCategory);
+            });
+        });
+    }
+
+    renderTeam("all");
+    bindTabs();
+</script>
+</body>
+</html>

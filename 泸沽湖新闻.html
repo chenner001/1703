@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>泸沽湖 · 高原明珠 生态典范</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Times New Roman', 'Georgia', '宋体', SimSun, serif;
+            line-height: 1.6;
+            color: #2c3e4f;
+        }
+
+        .news-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            border-bottom: 2px solid #2c5a4a;
+            padding: 28px 32px 16px;
+            text-align: center;
+            background: #ffffff;
+        }
+        .newspaper-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #2c5a4a;
+            font-family: inherit;
+        }
+        .motto {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-top: 4px;
+            font-family: inherit;
+        }
+        .date-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: #95a5a6;
+            border-top: 1px solid #e0e4e8;
+            padding-top: 12px;
+        }
+
+        /* 真实湖水风景照片 */
+        .hero-image {
+            width: 100%;
+            height: 460px;
+            background-image: url('https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop');
+            background-size: cover;
+            background-position: center 50%;
+            position: relative;
+        }
+        .hero-caption {
+            position: absolute;
+            bottom: 16px;
+            left: 24px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+        }
+
+        .headline {
+            padding: 28px 32px 16px;
+        }
+        .category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2c5a4a;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1e3a2f;
+            margin-bottom: 16px;
+            line-height: 1.25;
+        }
+        .subhead {
+            font-size: 1rem;
+            color: #5a6e7e;
+            border-left: 4px solid #2c5a4a;
+            padding-left: 18px;
+            margin: 12px 0;
+            font-style: normal;
+        }
+        .byline {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 12px;
+            display: flex;
+            gap: 24px;
+            border-top: 1px solid #eaeef2;
+            padding-top: 12px;
+        }
+
+        .content {
+            padding: 0 32px 40px;
+        }
+        .lead {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #2c5a4a;
+            border-left: 4px solid #2c5a4a;
+            padding-left: 20px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            text-align: justify;
+        }
+        .pull-quote {
+            float: right;
+            width: 280px;
+            margin: 12px 0 20px 28px;
+            background: #f8fafc;
+            border-left: 4px solid #2c5a4a;
+            padding: 18px 22px;
+            font-style: normal;
+            font-size: 0.95rem;
+            color: #2c5a4a;
+            font-family: inherit;
+        }
+        .pull-quote .author {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            font-style: normal;
+            color: #7f8c8d;
+            text-align: right;
+        }
+        h2 {
+            font-size: 1.3rem;
+            margin: 28px 0 16px;
+            color: #2c5a4a;
+            border-bottom: 1px solid #e2e8e0;
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #dce5e0;
+            padding: 20px 24px;
+            margin: 24px 0;
+            font-size: 0.9rem;
+        }
+        .info-box p {
+            margin-bottom: 6px;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+            margin: 28px 0;
+        }
+        .testimonial-card {
+            background: #fefefc;
+            border: 1px solid #e2e8e0;
+            padding: 20px;
+        }
+        .testimonial-card p {
+            font-style: normal;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .testimonial-card .name {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #e2e8e0;
+            padding-top: 8px;
+        }
+
+        .footer-note {
+            background: #2c5a4a;
+            color: #e2f0ea;
+            padding: 20px 32px;
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 680px) {
+            .hero-image {
+                height: 280px;
+            }
+            .headline {
+                padding: 20px;
+            }
+            .content {
+                padding: 0 20px 28px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+            .pull-quote {
+                float: none;
+                width: 100%;
+                margin: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="news-container">
+    <div class="header">
+        <div class="newspaper-name">自然 · 生态调查</div>
+        <div class="motto">深度报道 | 守护中国最美湖泊</div>
+        <div class="date-bar">
+            <span>2025年6月3日 星期二</span>
+            <span>第 048 期 · 特别策划</span>
+        </div>
+    </div>
+
+    <div class="hero-image">
+        <div class="hero-caption">泸沽湖 | 摄影 陈远山</div>
+    </div>
+
+    <div class="headline">
+        <div class="category">生态前线 · 独家调查</div>
+        <h1>泸沽湖：高原明珠，洗肺天堂</h1>
+        <div class="subhead">水质常年保持Ⅰ类，透明度逾12米，森林覆盖率78%，这里是中国最纯净的湖泊之一</div>
+        <div class="byline">
+            <span>记者 | 林清扬</span>
+            <span>摄影 | 陈远山</span>
+            <span>发自 四川盐源·云南宁蒗交界</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="lead">
+            六月的泸沽湖，湖水蓝得令人屏息。乘船行至湖心，能清晰看见水下十余米的水草摇曳。来自成都的游客李女士说：“这里的空气像被洗过一样，每一次呼吸都是享受。”
+        </div>
+
+        <p>泸沽湖，位于四川省盐源县与云南省宁蒗县交界处，湖面海拔2690米，面积约50平方公里，最大水深超过70米，是中国第三深的淡水湖。得益于严格的生态保护与摩梭人世代敬奉山水的传统，湖区水质常年保持国家Ⅰ类水标准，透明度高达11至12米，是名副其实的“高原明珠”。</p>
+
+        <div class="pull-quote">
+            “我曾在世界各地旅行，但从没见过如此清澈的湖水。在泸沽湖，连倒影都像油画。”
+            <div class="author">—— 旅行作家 许知远</div>
+        </div>
+
+        <p>根据泸沽湖自然保护区管理局最新公布的环境监测数据，今年第一季度空气质量优良天数达100%，PM2.5平均浓度仅12微克/立方米，负氧离子浓度高达每立方厘米8600个以上，是“天然氧吧”的极致体现。环湖徒步或骑行，清冽的风与满眼的蓝绿交织，几乎感觉不到高原的不适。</p>
+
+        <h2>生态之美 · 万物共生</h2>
+        <p>泸沽湖不仅拥有绝美湖光，更是生物多样性的宝库。湖中生长着特有的波叶海菜花，每年5月至10月，洁白的花朵漂浮水面，因对水质要求极高，被称为“水质试金石”。湖岸湿地栖息着黑颈鹤、中华秋沙鸭等珍稀鸟类，人与自然和谐共生的画面随处可见。据最新科考报告，湖区维管束植物超过500种，脊椎动物逾200种，其生态完整性在中国高原湖泊中名列前茅。</p>
+
+        <div class="info-box">
+            <p><strong>泸沽湖环境数据（2025年春季）</strong><br>
+            湖水能见度：12米<br>
+            森林覆盖率：78%<br>
+            年均负氧离子浓度：8600个/cm³<br>
+            环湖无工业污染，生活污水全收集处理</p>
+        </div>
+
+        <h2>沉浸式体验 · 慢行推荐</h2>
+        <div class="grid-2col">
+            <div class="testimonial-card">
+                <p>“清晨六点，在里格半岛看日出，晨雾如纱，湖面像打翻了调色盘。划船的摩梭阿妈唱着古老的歌谣，那一刻觉得人间值得。”</p>
+                <div class="name">—— 上海游客 王琳</div>
+            </div>
+            <div class="testimonial-card">
+                <p>“沿着环湖公路骑行40公里，眼睛一刻都没休息。草海的芦苇荡、女神湾的落日、情人滩的细沙……每一帧都是壁纸。”</p>
+                <div class="name">—— 骑行爱好者 阿亮</div>
+            </div>
+            <div class="testimonial-card">
+                <p>“住在蒗放村的民宿，推开窗就是湖。晚上看星星，银河清晰可见。老板说这里光污染几乎为零，是观星圣地。”</p>
+                <div class="name">—— 星空摄影师 南卡</div>
+            </div>
+        </div>
+
+        <h2>摩梭文化 · 最后的母系家园</h2>
+        <p>泸沽湖畔居住着神秘的摩梭人，他们保留着独特的母系大家庭和“走婚”习俗。如今，游客可以走进摩梭人家，品尝猪膘肉、苏里玛酒，聆听古老的创世传说。摩梭人世代遵循“敬山拜水”的法则，不向湖中排污，不捕猎神山生灵，这份古老的生态智慧与现代保护理念不谋而合。</p>
+
+        <h2>旅游提示</h2>
+        <p>最佳季节：四季皆宜，3-5月春暖花开，7-9月海菜花盛开，冬季可赏晨雾与候鸟。交通：可从丽江或西昌乘车前往，车程约4小时。建议至少停留2天，环湖骑行或包车游览。请爱护环境，不投喂野生动物，带走所有垃圾。泸沽湖自然保护区已全面禁止使用一次性塑料制品，并实行每日游客限量预约。</p>
+
+        <div class="pull-quote" style="float: none; margin-top: 32px;">
+            “泸沽湖不是景点，而是一种生活方式。当你在这里住下来，你会明白为什么摩梭人不愿意离开。”
+            <div class="author">—— 当地民宿经营者</div>
+        </div>
+
+        <p>近年来，随着生态旅游理念的推广，泸沽湖在保护与开发中找到了平衡。限制每日游客量、推广电瓶车环湖、禁用一次性塑料制品……每一项举措都在为这片纯净之地续航。如果你也渴望一场洗肺之旅，泸沽湖不会让你失望。</p>
+    </div>
+
+    <div class="footer-note">
+        数据支持：泸沽湖自然保护区管理局 | 四川省生态环境监测总站
+    </div>
+</div>
+</body>
+</html>

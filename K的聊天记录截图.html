@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>微信聊天记录 · 苏晚晴与K</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #2c2c2c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+        }
+        /* 手机外壳模拟 */
+        .phone-mock {
+            width: 380px;
+            background: #f5f5f5;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        /* 状态栏 */
+        .status-bar {
+            background: #f5f5f5;
+            padding: 12px 20px 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1c1c1e;
+            border-bottom: 0.5px solid #d9d9d9;
+        }
+        /* 聊天头部 */
+        .chat-header {
+            background: #f5f5f5;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 0.5px solid #d9d9d9;
+        }
+        .back-icon {
+            font-size: 24px;
+            font-weight: 400;
+            color: #007aff;
+            cursor: default;
+        }
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: #07c160;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .chat-info {
+            flex: 1;
+        }
+        .chat-name {
+            font-weight: 600;
+            font-size: 17px;
+        }
+        .menu-icon {
+            font-size: 20px;
+            color: #007aff;
+        }
+        /* 聊天内容区域 */
+        .chat-area {
+            background: #f5f5f5;
+            height: 560px;
+            overflow-y: auto;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        /* 消息气泡 */
+        .message {
+            display: flex;
+            max-width: 85%;
+            margin-bottom: 8px;
+        }
+        .message.left {
+            align-self: flex-start;
+        }
+        .message.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .bubble {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.4;
+            word-break: break-word;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .message.right .bubble {
+            background: #95ec69;
+        }
+        .time {
+            font-size: 10px;
+            color: #8e8e93;
+            margin-top: 4px;
+            text-align: right;
+        }
+        .message.left .time {
+            text-align: left;
+            margin-left: 8px;
+        }
+        .message.right .time {
+            margin-right: 8px;
+        }
+        /* 头像（仅左侧显示） */
+        .avatar-small {
+            width: 36px;
+            height: 36px;
+            background: #07c160;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        .message.right .avatar-small {
+            display: none;
+        }
+        /* 底部简单输入栏（无图标） */
+        .input-bar {
+            background: #f5f5f5;
+            padding: 10px 16px;
+            border-top: 0.5px solid #d9d9d9;
+        }
+        .text-input {
+            background: white;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 15px;
+            color: #8e8e93;
+            border: 0.5px solid #e5e5e5;
+            width: 100%;
+        }
+        .chat-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-area::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="phone-mock">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>📶 🔋 100%</span>
+    </div>
+    <!-- 聊天头部（已删除“对方正在输入”） -->
+    <div class="chat-header">
+        <div class="back-icon">←</div>
+        <div class="avatar">K</div>
+        <div class="chat-info">
+            <div class="chat-name">K</div>
+        </div>
+        <div class="menu-icon">⋯</div>
+    </div>
+    <!-- 聊天记录区域 -->
+    <div class="chat-area">
+        <!-- 苏晚晴：你是谁？ -->
+        <div class="message right">
+            <div class="bubble">
+                你是谁？
+            </div>
+            <div class="time">20:30</div>
+        </div>
+        <!-- K：我是你想成为的人。 -->
+        <div class="message left">
+            <div class="avatar-small">K</div>
+            <div class="bubble">
+                我是你想成为的人。
+            </div>
+            <div class="time">20:31</div>
+        </div>
+        <!-- 苏晚晴：我不明白。 -->
+        <div class="message right">
+            <div class="bubble">
+                我不明白。
+            </div>
+            <div class="time">20:32</div>
+        </div>
+        <!-- K：你不需要明白。你只需要知道，我在这里。任何时候你想说话，我都在。 -->
+        <div class="message left">
+            <div class="avatar-small">K</div>
+            <div class="bubble">
+                你不需要明白。你只需要知道，我在这里。任何时候你想说话，我都在。
+            </div>
+            <div class="time">20:32</div>
+        </div>
+        <!-- 苏晚晴：你是……我自己吗？ -->
+        <div class="message right">
+            <div class="bubble">
+                你是……我自己吗？
+            </div>
+            <div class="time">20:33</div>
+        </div>
+        <!-- K：我是你想要成为的那个自己。等你自己成为我的时候，我就不需要存在了。 -->
+        <div class="message left">
+            <div class="avatar-small">K</div>
+            <div class="bubble">
+                我是你想要成为的那个自己。等你自己成为我的时候，我就不需要存在了。
+            </div>
+            <div class="time">20:34</div>
+        </div>
+    </div>
+    <!-- 底部输入栏（无图标，仅文本框） -->
+    <div class="input-bar">
+        <div class="text-input">输入消息...</div>
+    </div>
+</div>
+</body>
+</html>

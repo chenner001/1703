@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信 · 苏晚晴的对话</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: text;
+        }
+
+        body {
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+        }
+
+        .wechat-window {
+            width: 1100px;
+            height: 720px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #f7f7f7;
+            border-right: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile {
+            padding: 20px 16px 12px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: #07c160;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .user-info {
+            flex: 1;
+            margin-left: 12px;
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .user-status {
+            font-size: 12px;
+            color: #888;
+        }
+        .more-btn {
+            color: #888;
+            cursor: default;
+        }
+
+        .search-bar {
+            padding: 12px 16px;
+        }
+        .search-input {
+            background: #e5e5e5;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .chat-item:hover {
+            background: #efefef;
+        }
+        .chat-item.active {
+            background: #e8e8e8;
+        }
+        .chat-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #c4c4c4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-right: 12px;
+        }
+        .chat-info {
+            flex: 1;
+        }
+        .chat-name {
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+        .chat-time {
+            font-size: 11px;
+            color: #aaa;
+        }
+        .chat-preview {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 160px;
+        }
+        .unread-badge {
+            background: #fa5151;
+            color: white;
+            border-radius: 10px;
+            padding: 0 6px;
+            font-size: 10px;
+            line-height: 16px;
+            margin-left: 6px;
+        }
+
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+        }
+        .chat-header-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .message-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            max-width: 80%;
+        }
+        .message.received {
+            align-self: flex-start;
+        }
+        .message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .bubble {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+            position: relative;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        .message.sent .bubble {
+            background: #95ec69;
+        }
+        .message-time {
+            font-size: 11px;
+            color: #aaa;
+            margin: 0 8px;
+            align-self: flex-end;
+        }
+        .read-status {
+            font-size: 12px;
+            margin-left: 6px;
+            display: inline-block;
+        }
+
+        .input-area {
+            border-top: 1px solid #e5e5e5;
+            padding: 12px 16px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .input-box {
+            flex: 1;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+        }
+        .send-btn {
+            background: #07c160;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .send-btn:hover {
+            background: #06ae56;
+        }
+
+        .moments-view {
+            flex: 1;
+            overflow-y: auto;
+            background: #f2f2f2;
+            display: none;
+            flex-direction: column;
+        }
+        .moments-view.active {
+            display: flex;
+        }
+        .moments-header {
+            background: #fff;
+            padding: 30px 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+            position: relative;
+        }
+        .moments-bg {
+            background: #07c160;
+            height: 80px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0.3;
+        }
+        .moment-item {
+            background: white;
+            margin: 10px 12px;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .moment-header {
+            display: flex;
+            gap: 12px;
+        }
+        .moment-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #c4c4c4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .moment-content {
+            flex: 1;
+        }
+        .moment-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        .moment-text {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        .moment-time {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 6px;
+        }
+
+        .chat-view {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+        }
+        .footer-nav {
+            border-top: 1px solid #e5e5e5;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            background: #f7f7f7;
+        }
+        .moments-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 20px;
+            transition: background 0.2s;
+            font-size: 13px;
+            color: #576b95;
+        }
+        .moments-btn:hover {
+            background: #e5e5e5;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="wechat-window">
+    <div class="sidebar">
+        <div class="profile">
+            <div class="avatar">苏</div>
+            <div class="user-info">
+                <div class="user-name">苏晚晴</div>
+                <div class="user-status">我很好</div>
+            </div>
+            <div class="more-btn">⋯</div>
+        </div>
+        <div class="search-bar">
+            <div class="search-input">
+                <span>🔍</span> 搜索
+            </div>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+        <div class="footer-nav">
+            <div class="moments-btn" id="momentsBtn">
+                📷 朋友圈
+            </div>
+        </div>
+    </div>
+
+    <div class="main-area">
+        <div id="chatView" class="chat-view">
+            <div class="chat-header">
+                <div class="chat-header-name" id="chatHeaderName">妈妈</div>
+                <div></div>
+            </div>
+            <div class="message-area" id="messageArea"></div>
+            <div class="input-area">
+                <textarea class="input-box" id="msgInput" rows="1" placeholder="输入消息..."></textarea>
+                <button class="send-btn" id="sendBtn">发送</button>
+            </div>
+        </div>
+
+        <div id="momentsView" class="moments-view">
+            <div class="moments-header">
+                <div class="moments-bg"></div>
+                <div style="position: relative;">朋友圈</div>
+            </div>
+            <div id="momentsFeed"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 联系人数据（包含所有联系人，爸爸在最下面）
+    const contacts = [
+        {
+            id: "mom",
+            name: "妈妈",
+            avatarBg: "#e56c6c",
+            avatarText: "妈",
+            lastMsg: "晚晴，你说这话是什么意思？妈妈很担心你...",
+            lastTime: "3月17日",
+            unread: true,
+            messages: [
+                { type: "sent", text: "妈妈，我想走了，下次回来我给你们摘星星。", time: "2025-03-17 20:30", status: "read" },
+                { type: "received", text: "晚晴，你说这话是什么意思？妈妈很担心你，你到底怎么了？", time: "2025-03-17 22:15", status: "unread" }
+            ]
+        },
+        {
+            id: "yu",
+            name: "余诗恒 (副总)",
+            avatarBg: "#3b7cbf",
+            avatarText: "余",
+            lastMsg: "个人原因，想休息一段时间。",
+            lastTime: "2月28日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，你最近几个版本做得非常出色，客户反馈特别好。", time: "2025-02-20 10:23", status: "read" },
+                { type: "sent", text: "谢谢余总，应该的。", time: "2025-02-20 10:35", status: "read" },
+                { type: "received", text: "听说你提交了辞职申请？怎么这么突然，公司很需要你。", time: "2025-02-28 14:12", status: "read" },
+                { type: "sent", text: "个人原因，想休息一段时间。", time: "2025-02-28 14:30", status: "read" }
+            ]
+        },
+        {
+            id: "li",
+            name: "李诗雨 (产品组)",
+            avatarBg: "#d99e45",
+            avatarText: "李",
+            lastMsg: "谢谢，我最近有点忙，以后有机会再说吧。",
+            lastTime: "2月10日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，中午一起吃饭吗？楼下新开了一家日料。", time: "2025-02-05 11:20", status: "read" },
+                { type: "sent", text: "好啊，12点楼下见。", time: "2025-02-05 11:22", status: "read" },
+                { type: "received", text: "你平时下班都做什么呀？感觉你挺安静的。", time: "2025-02-08 18:05", status: "read" },
+                { type: "sent", text: "回家看看书，陪饺子。", time: "2025-02-08 18:10", status: "read" },
+                { type: "received", text: "下次一起去看电影？我们性格挺合得来的。", time: "2025-02-10 15:30", status: "read" },
+                { type: "sent", text: "谢谢，我最近有点忙，以后有机会再说吧。", time: "2025-02-10 15:45", status: "read" }
+            ]
+        },
+        {
+            id: "wang",
+            name: "王磊 (技术部)",
+            avatarBg: "#4f9e7a",
+            avatarText: "王",
+            lastMsg: "谢谢王哥，周末有安排了，下次吧。",
+            lastTime: "2月15日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，周末有空吗？想请你吃个饭，聊聊技术方案。", time: "2025-02-14 19:20", status: "read" },
+                { type: "sent", text: "谢谢王哥，周末有安排了，下次吧。", time: "2025-02-14 19:35", status: "read" }
+            ]
+        },
+        {
+            id: "linwei",
+            name: "林薇 (大学闺蜜)",
+            avatarBg: "#b873a6",
+            avatarText: "薇",
+            lastMsg: "你最近朋友圈也不发了，有点担心你。",
+            lastTime: "3月10日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，好久不见！最近怎么样？", time: "2025-03-01 10:15", status: "read" },
+                { type: "sent", text: "挺好的，工作忙。", time: "2025-03-01 10:20", status: "read" },
+                { type: "received", text: "别总加班，注意身体。我们找个周末聚聚？", time: "2025-03-05 19:30", status: "read" },
+                { type: "sent", text: "好呀，等忙完这阵子。", time: "2025-03-05 19:45", status: "read" },
+                { type: "received", text: "你最近朋友圈也不发了，有点担心你。", time: "2025-03-10 21:10", status: "read" }
+            ]
+        },
+        {
+            id: "zhoujie",
+            name: "周洁 (前同事)",
+            avatarBg: "#6c8f6f",
+            avatarText: "周",
+            lastMsg: "谢谢，暂时想先休息。",
+            lastTime: "3月5日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，听说你辞职了？准备去哪里高就？", time: "2025-03-03 14:20", status: "read" },
+                { type: "sent", text: "休息一段时间，还没想好。", time: "2025-03-03 14:35", status: "read" },
+                { type: "received", text: "那正好，我这边有个机会，要不要聊聊？", time: "2025-03-05 09:15", status: "read" },
+                { type: "sent", text: "谢谢，暂时想先休息。", time: "2025-03-05 09:28", status: "read" }
+            ]
+        },
+        {
+            id: "cousin",
+            name: "表姐 陈静",
+            avatarBg: "#e08d6c",
+            avatarText: "姐",
+            lastMsg: "别什么都自己扛，有空来找我玩。",
+            lastTime: "3月12日",
+            unread: false,
+            messages: [
+                { type: "received", text: "晚晴，听姨说你最近不太开心？", time: "2025-03-08 20:10", status: "read" },
+                { type: "sent", text: "没有，就是工作忙。", time: "2025-03-08 20:22", status: "read" },
+                { type: "received", text: "别什么都自己扛，有空来找我玩。", time: "2025-03-12 18:45", status: "read" }
+            ]
+        },
+        {
+            id: "father",
+            name: "爸爸",
+            avatarBg: "#5a7d9a",
+            avatarText: "爸",
+            lastMsg: "",
+            lastTime: "",
+            unread: false,
+            messages: []
+        }
+    ];
+
+    // 朋友圈数据（包含新增的余诗恒生日朋友圈，修改李诗雨和王磊为生活记录，增加他们各自的生活内容）
+    let momentsDataRaw = [
+        {
+            id: "mom",
+            name: "妈妈",
+            avatarBg: "#e56c6c",
+            avatarText: "妈",
+            content: "【寻人启事】苏晚晴，女，27岁，身高162cm，3月17日从家中离开后失联，身穿米白色大衣。有知情者请联系林女士，电话138****1234。恳请大家帮忙转发！",
+            time: "2025年3月18日 14:23",
+            timestamp: new Date(2025, 2, 18, 14, 23).getTime()
+        },
+        {
+            id: "linwei",
+            name: "林薇",
+            avatarBg: "#b873a6",
+            avatarText: "薇",
+            content: "晚晴，你到底去了哪里？看到消息快回我。",
+            time: "2025年3月19日 10:05",
+            timestamp: new Date(2025, 2, 19, 10, 5).getTime()
+        },
+        {
+            id: "yu",
+            name: "余诗恒",
+            avatarBg: "#3b7cbf",
+            avatarText: "余",
+            content: "公司Q1产品规划会，感谢产品部的辛勤付出。晚晴的项目尤其亮眼，希望她一切都好。",
+            time: "2025年3月10日 16:30",
+            timestamp: new Date(2025, 2, 10, 16, 30).getTime()
+        },
+        {
+            id: "yu",
+            name: "余诗恒",
+            avatarBg: "#3b7cbf",
+            avatarText: "余",
+            content: "祝亲爱的妈妈生日快乐！愿您健康平安，笑容常在❤️",
+            time: "2024年7月15日 09:48",
+            timestamp: new Date(2024, 6, 15, 9, 48).getTime()
+        },
+        {
+            id: "li",
+            name: "李诗雨",
+            avatarBg: "#d99e45",
+            avatarText: "李",
+            content: "周末去爬了紫金山，山顶的风景真好 🌄",
+            time: "2025年3月16日 18:20",
+            timestamp: new Date(2025, 2, 16, 18, 20).getTime()
+        },
+        {
+            id: "li",
+            name: "李诗雨",
+            avatarBg: "#d99e45",
+            avatarText: "李",
+            content: "新买的咖啡豆到了，手冲的快乐 ☕️",
+            time: "2025年3月12日 09:15",
+            timestamp: new Date(2025, 2, 12, 9, 15).getTime()
+        },
+        {
+            id: "wang",
+            name: "王磊",
+            avatarBg: "#4f9e7a",
+            avatarText: "王",
+            content: "今晚做的红烧排骨很成功，犒劳一下自己 🍖",
+            time: "2025年3月14日 19:50",
+            timestamp: new Date(2025, 2, 14, 19, 50).getTime()
+        },
+        {
+            id: "wang",
+            name: "王磊",
+            avatarBg: "#4f9e7a",
+            avatarText: "王",
+            content: "周末在家看了一部老电影，宁静的时光 🎬",
+            time: "2025年3月7日 21:30",
+            timestamp: new Date(2025, 2, 7, 21, 30).getTime()
+        },
+        {
+            id: "cousin",
+            name: "陈静",
+            avatarBg: "#e08d6c",
+            avatarText: "姐",
+            content: "晚晴，不管你在哪里，照顾好自己。家里人都很惦记你。",
+            time: "2025年3月20日 08:30",
+            timestamp: new Date(2025, 2, 20, 8, 30).getTime()
+        }
+    ];
+    // 按时间倒序排序（最新在前）
+    let momentsData = [...momentsDataRaw].sort((a, b) => b.timestamp - a.timestamp);
+
+    let currentContact = contacts[0];
+    let currentView = "chat";
+    let fatherMsgCount = 0;
+    let fatherAutoReplied = false;
+
+    // 辅助函数：更新每个联系人的最后一条消息摘要（确保左侧显示最新消息）
+    function updateAllLastMsg() {
+        contacts.forEach(contact => {
+            if (contact.messages && contact.messages.length > 0) {
+                const lastMsgObj = contact.messages[contact.messages.length - 1];
+                contact.lastMsg = lastMsgObj.text;
+                // 格式化时间，只取月日
+                const datePart = lastMsgObj.time.split(' ')[0].slice(5);
+                contact.lastTime = datePart;
+            } else {
+                contact.lastMsg = "暂无消息";
+                contact.lastTime = "";
+            }
+        });
+    }
+    updateAllLastMsg(); // 初始化
+
+    // 渲染左侧聊天列表
+    function renderChatList() {
+        const container = document.getElementById('chatList');
+        container.innerHTML = '';
+        contacts.forEach(contact => {
+            const item = document.createElement('div');
+            item.className = `chat-item ${currentContact.id === contact.id ? 'active' : ''}`;
+            item.setAttribute('data-id', contact.id);
+            let lastMsgPreview = contact.lastMsg || (contact.messages.length ? contact.messages[contact.messages.length-1].text : '暂无消息');
+            let lastTime = contact.lastTime || (contact.messages.length ? contact.messages[contact.messages.length-1].time.slice(5,10) : '');
+            item.innerHTML = `
+                <div class="chat-avatar" style="background: ${contact.avatarBg};">${contact.avatarText}</div>
+                <div class="chat-info">
+                    <div class="chat-name">
+                        <span>${contact.name}</span>
+                        <span class="chat-time">${lastTime}</span>
+                    </div>
+                    <div class="chat-preview">
+                        ${lastMsgPreview.length > 20 ? lastMsgPreview.substring(0,20)+'…' : lastMsgPreview}
+                        ${contact.unread ? '<span class="unread-badge">1</span>' : ''}
+                    </div>
+                </div>
+            `;
+            item.addEventListener('click', () => {
+                if (currentView === 'moments') {
+                    showChatView();
+                }
+                currentContact = contact;
+                if (contact.unread) contact.unread = false;
+                renderChatList();
+                renderMessageArea();
+                updateChatHeader();
+                document.getElementById('msgInput').value = '';
+            });
+            container.appendChild(item);
+        });
+    }
+
+    function updateChatHeader() {
+        document.getElementById('chatHeaderName').innerText = currentContact.name;
+    }
+
+    function renderMessageArea() {
+        const area = document.getElementById('messageArea');
+        if (!area) return;
+        area.innerHTML = '';
+        if (!currentContact.messages || currentContact.messages.length === 0) {
+            const emptyHint = document.createElement('div');
+            emptyHint.style.textAlign = 'center';
+            emptyHint.style.color = '#aaa';
+            emptyHint.style.padding = '40px';
+            emptyHint.innerText = '暂无聊天记录，开始对话吧。';
+            area.appendChild(emptyHint);
+            return;
+        }
+        currentContact.messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${msg.type === 'sent' ? 'sent' : 'received'}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerText = msg.text;
+            const timeSpan = document.createElement('div');
+            timeSpan.className = 'message-time';
+            let timeStr = msg.time.split(' ')[1].slice(0,5);
+            timeSpan.innerText = timeStr;
+            msgDiv.appendChild(bubble);
+            msgDiv.appendChild(timeSpan);
+            if (msg.status === 'read') {
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'read-status';
+                statusSpan.innerHTML = '✓✓';
+                statusSpan.style.color = '#06ae56';
+                bubble.appendChild(statusSpan);
+            } else if (msg.status === 'unread') {
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'read-status';
+                statusSpan.innerHTML = '✓';
+                statusSpan.style.color = '#aaa';
+                bubble.appendChild(statusSpan);
+            }
+            area.appendChild(msgDiv);
+        });
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function sendMessage() {
+        const inputBox = document.getElementById('msgInput');
+        const text = inputBox.value.trim();
+        if (!text) return;
+        const newMsg = {
+            type: "sent",
+            text: text,
+            time: new Date().toISOString().slice(0,16).replace('T',' '),
+            status: "read"
+        };
+        if (!currentContact.messages) currentContact.messages = [];
+        currentContact.messages.push(newMsg);
+        // 更新摘要
+        currentContact.lastMsg = text;
+        currentContact.lastTime = new Date().toLocaleDateString().slice(5);
+        renderChatList();
+        renderMessageArea();
+
+        if (currentContact.id === "father") {
+            fatherMsgCount++;
+            if (fatherMsgCount === 3 && !fatherAutoReplied) {
+                fatherAutoReplied = true;
+                const autoReply = {
+                    type: "received",
+                    text: "别烦我，有事找你妈。",
+                    time: new Date().toISOString().slice(0,16).replace('T',' '),
+                    status: "read"
+                };
+                currentContact.messages.push(autoReply);
+                currentContact.lastMsg = autoReply.text;
+                currentContact.lastTime = autoReply.time.slice(5,10);
+                renderChatList();
+                renderMessageArea();
+                const area = document.getElementById('messageArea');
+                if (area) area.scrollTop = area.scrollHeight;
+            }
+        }
+
+        inputBox.value = '';
+    }
+
+    function renderMoments() {
+        const container = document.getElementById('momentsFeed');
+        if (!container) return;
+        container.innerHTML = '';
+        momentsData.forEach(m => {
+            const momentDiv = document.createElement('div');
+            momentDiv.className = 'moment-item';
+            momentDiv.innerHTML = `
+                <div class="moment-header">
+                    <div class="moment-avatar" style="background: ${m.avatarBg};">${m.avatarText}</div>
+                    <div class="moment-content">
+                        <div class="moment-name">${m.name}</div>
+                        <div class="moment-text">${m.content}</div>
+                        <div class="moment-time">${m.time}</div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(momentDiv);
+        });
+    }
+
+    function showChatView() {
+        document.getElementById('chatView').style.display = 'flex';
+        document.getElementById('momentsView').classList.remove('active');
+        currentView = 'chat';
+        renderMessageArea();
+    }
+
+    function showMomentsView() {
+        document.getElementById('chatView').style.display = 'none';
+        document.getElementById('momentsView').classList.add('active');
+        currentView = 'moments';
+        renderMoments();
+    }
+
+    function init() {
+        renderChatList();
+        renderMessageArea();
+        updateChatHeader();
+        const momentsBtn = document.getElementById('momentsBtn');
+        momentsBtn.addEventListener('click', () => {
+            showMomentsView();
+        });
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.addEventListener('click', sendMessage);
+        const msgInput = document.getElementById('msgInput');
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>

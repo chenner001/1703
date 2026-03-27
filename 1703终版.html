@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>主卧 · 静谧空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: 'Segoe UI', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+            padding: 32px 24px;
+            color: #4a3b2c;
+        }
+
+        /* 整体容器 */
+        .home-map {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 房间卡片 */
+        .room-card {
+            background: #fffef7;
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            padding: 24px 20px 28px;
+            transition: transform 0.2s;
+            border: 1px solid #f0e5d8;
+        }
+        .room-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* 房间头部 - 已删除文字和图标，仅保留间距 */
+        .room-header {
+            margin-bottom: 24px;
+            border-bottom: 2px dashed #e2d5c4;
+            padding-bottom: 12px;
+        }
+
+        /* 家具网格 */
+        .furniture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 20px 12px;
+        }
+
+        /* 每个家具卡片 */
+        .furniture-item {
+            background: #fefaf5;
+            border-radius: 24px;
+            padding: 16px 8px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #ede3d6;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .furniture-item:hover {
+            background: #fff7ed;
+            border-color: #dbbc87;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+        }
+        .furniture-emoji {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .furniture-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #7c6242;
+            letter-spacing: 0.3px;
+        }
+
+        /* 可点击的圆镜样式 - 与普通文字几乎一致，只有鼠标指针变化 */
+        .clickable-mirror {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border-bottom: none;
+        }
+        .clickable-mirror:hover {
+            /* 无额外样式，仅鼠标变手型 */
+        }
+
+        /* 模态框 (弹窗) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: 32px;
+            width: 380px;
+            max-width: 85vw;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalPop 0.2s ease;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px 12px;
+            border-bottom: 1px solid #f0e5da;
+        }
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #5b422a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #b39b78;
+            width: 32px;
+            height: 32px;
+            border-radius: 40px;
+        }
+        .close-modal:hover {
+            background: #f4ede5;
+        }
+        .modal-body {
+            padding: 20px 24px 28px;
+        }
+        .detail-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .detail-location {
+            background: #f9f4ec;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 0.7rem;
+            margin: 10px 0;
+            color: #a57c54;
+        }
+        .detail-story {
+            margin-top: 16px;
+            background: #fefaf5;
+            padding: 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #5e4b34;
+            border-left: 3px solid #e0c29b;
+        }
+    </style>
+</head>
+<body>
+<div class="home-map">
+    <!-- 仅保留主卧卡片，头部已清空文字和图标 -->
+    <div class="room-card" id="master-bedroom">
+        <div class="room-header"></div>
+        <div class="furniture-grid" id="bedroom-grid"></div>
+    </div>
+    <!-- 脚注已删除 -->
+</div>
+
+<!-- 模态框 -->
+<div id="furnitureModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">家具</h3>
+            <button class="close-modal" id="closeModalBtn">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 动态填充 -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // 家具数据：新增黑色笔记本，点击跳转
+    const furnitureData = [
+        { 
+            name: "双人床", icon: "🛏️", room: "bedroom",
+            location: "房间中央靠墙",
+            story: "实木框架床，搭配亚麻床品。每个清晨的阳光都会透过纱帘洒在床头，宁静而治愈。"
+        },
+        { 
+            name: "床头柜", icon: "💡", room: "bedroom",
+            location: "床左侧",
+            story: "藤编抽屉床头柜，上面总放着一本睡前读物、一杯温水，还有一本《国家地理》杂志，台灯光线温柔。"
+        },
+        { 
+            name: "梳妆台", icon: "🪞", room: "bedroom",
+            location: "窗边角落",
+            story: "简约梳妆台，抽屉里收藏着各式香水小样，还有一面可翻转的圆镜。",
+            special: true   // 标记需要特殊处理圆镜点击
+        },
+        { 
+            name: "笔记本电脑 💻", icon: "💻", room: "bedroom",
+            location: "书桌上",
+            story: "点击在新标签页打开桌面 →",
+            isLink: true,
+            linkUrl: "桌面.html",
+            openInNewTab: true
+        },
+        { 
+            name: "黑色笔记本", icon: "📓", room: "bedroom",
+            location: "书桌一角",
+            story: "点击在新标签页打开笔记本 →",
+            isLink: true,
+            linkUrl: "黑色笔记本.html",
+            openInNewTab: true   // 新增新标签页打开
+        },
+        { 
+            name: "飘窗软垫", icon: "🪟", room: "bedroom",
+            location: "飘窗上",
+            story: "铺着厚垫子的飘窗，放几个抱枕，是午后小憩或看雨的绝佳位置。"
+        },
+        { 
+            name: "木质衣帽架", icon: "🧥", room: "bedroom",
+            location: "入门处",
+            story: "干净整洁的木质衣帽架，衣物挂放有序，空间清爽利落。"
+        },
+        { 
+            name: "衣柜", icon: "🚪", room: "bedroom",
+            location: "靠墙一侧",
+            story: "整体衣柜内部收纳整齐，衣物分类明晰，空间干净整洁。"
+        }
+    ];
+
+    // 获取容器
+    const bedroomGrid = document.getElementById('bedroom-grid');
+
+    // 渲染家具
+    function renderFurniture() {
+        bedroomGrid.innerHTML = '';
+        furnitureData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'furniture-item';
+            
+            div.innerHTML = `
+                <div class="furniture-emoji">${item.icon}</div>
+                <div class="furniture-name">${item.name}</div>
+            `;
+            
+            // 如果是笔记本电脑或黑色笔记本，点击跳转
+            if (item.isLink) {
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (item.openInNewTab) {
+                        window.open(item.linkUrl, '_blank');  // 新标签页打开
+                    } else {
+                        window.location.href = item.linkUrl;   // 当前页跳转
+                    }
+                });
+            } else {
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showModal(item);
+                });
+            }
+            
+            bedroomGrid.appendChild(div);
+        });
+    }
+
+    // 模态框相关
+    const modal = document.getElementById('furnitureModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // 针对梳妆台，生成带可点击圆镜的故事文本
+    function getStoryWithClickableMirror(storyText) {
+        return storyText.replace('圆镜', '<span class="clickable-mirror" onclick="alert(\'好想消失\')">圆镜</span>');
+    }
+
+    function showModal(item) {
+        modalTitle.innerHTML = `${item.icon} ${item.name}`;
+        
+        let storyHtml = item.story;
+        // 如果是梳妆台，将“圆镜”变为可点击元素
+        if (item.name === "梳妆台") {
+            storyHtml = getStoryWithClickableMirror(item.story);
+        }
+        
+        modalBody.innerHTML = `
+            <div class="detail-icon">${item.icon}</div>
+            <div><strong>📍 放置位置</strong><br>${item.location}</div>
+            <div class="detail-location">🏠 主卧</div>
+            <div class="detail-story">
+                <strong>📖 背后的故事</strong><br>
+                ${storyHtml}
+            </div>
+        `;
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // 启动渲染
+    renderFurniture();
+</script>
+</body>
+</html>

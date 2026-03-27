@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>心理评估报告 · 苏晚晴</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e6e9f0;
+            font-family: 'Courier New', 'Segoe UI', 'Times New Roman', serif;
+            padding: 40px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 报告单卡片 - 纯白纸张风格 */
+        .report-container {
+            max-width: 860px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e2e2;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 水印效果 (轻微) */
+        .report-container {
+            position: relative;
+        }
+        .report-container::after {
+            content: "CONFIDENTIAL";
+            position: absolute;
+            bottom: 40px;
+            right: 30px;
+            font-size: 60px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.02);
+            pointer-events: none;
+            font-family: monospace;
+            transform: rotate(-15deg);
+        }
+
+        /* 头部区域 */
+        .header {
+            background: #fefefe;
+            padding: 24px 32px 16px;
+            border-bottom: 2px solid #eae2d4;
+            text-align: center;
+        }
+        .hospital-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #2c4a3b;
+            font-family: 'Times New Roman', serif;
+        }
+        .hospital-sub {
+            font-size: 0.7rem;
+            color: #7a6e5a;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .report-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px dashed #e2d9cc;
+            color: #4a5b3c;
+        }
+
+        /* 主体内容 */
+        .content {
+            padding: 28px 32px 32px;
+        }
+
+        /* 信息行 */
+        .info-row {
+            display: flex;
+            margin-bottom: 14px;
+            border-bottom: 1px dotted #ece3d4;
+            padding-bottom: 8px;
+        }
+        .info-label {
+            width: 130px;
+            font-weight: 600;
+            color: #5f6848;
+        }
+        .info-value {
+            flex: 1;
+            color: #2c3a2b;
+            font-family: monospace;
+        }
+
+        /* 评估段落 */
+        .section {
+            margin: 24px 0 20px;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 1rem;
+            border-left: 4px solid #8b6c42;
+            padding-left: 12px;
+            margin-bottom: 14px;
+            color: #3a5a3a;
+        }
+        .text-block {
+            margin-bottom: 16px;
+            text-align: justify;
+            color: #2c3a2b;
+        }
+        .signature {
+            margin-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #ece3d4;
+            padding-top: 24px;
+            font-size: 0.85rem;
+        }
+        .sign-line {
+            width: 200px;
+            border-bottom: 1px solid #000;
+            margin-top: 8px;
+        }
+        .footer-note {
+            margin-top: 28px;
+            font-size: 0.7rem;
+            color: #9e927a;
+            text-align: center;
+            border-top: 1px solid #ece3d4;
+            padding-top: 16px;
+        }
+
+        /* 诊断突出 */
+        .diagnosis {
+            background: #fffaf5;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border-left: 6px solid #b1624b;
+            margin: 20px 0;
+        }
+        .diagnosis strong {
+            font-size: 1rem;
+            color: #b34e2e;
+        }
+
+        @media (max-width: 680px) {
+            .content {
+                padding: 20px;
+            }
+            .info-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .info-label {
+                width: auto;
+            }
+            .header {
+                padding: 16px;
+            }
+            .hospital-name {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="report-container">
+    <div class="header">
+        <div class="hospital-name">南京市精神卫生中心</div>
+        <div class="hospital-sub">Nanjing Mental Health Center · 临床心理科</div>
+        <div class="report-title">心理评估报告</div>
+    </div>
+
+    <div class="content">
+        <!-- 基本信息 -->
+        <div class="info-row">
+            <div class="info-label">姓名</div>
+            <div class="info-value">苏晚晴</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">性别</div>
+            <div class="info-value">女</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">年龄</div>
+            <div class="info-value">22岁 (评估时)</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">评估日期</div>
+            <div class="info-value">2019年4月11日</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">评估编号</div>
+            <div class="info-value">NJMH-2019-0411-027</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">主诉</div>
+            <div class="info-value">“经常感觉时间丢失，有时会收到自己记不清的短信，身边人称我有时像另一个人。近期有自伤念头，无法解释的情绪波动。”</div>
+        </div>
+
+        <!-- 评估工具 -->
+        <div class="section">
+            <div class="section-title">评估工具</div>
+            <div class="text-block">
+                • 结构化临床访谈（SCID-D）<br>
+                • 解离性体验量表（DES-II）<br>
+                • 明尼苏达多相人格问卷（MMPI-2）<br>
+                • 临床观察与家属访谈
+            </div>
+        </div>
+
+        <!-- 评估结果 -->
+        <div class="section">
+            <div class="section-title">评估结果</div>
+            <div class="text-block">
+                来访者意识清晰，定向力完整。在访谈过程中表现出显著的记忆断层，对过去一周内多次无法解释的行为（如凌晨发送信息、购买非本人习惯物品）无法回忆。DES-II量表总分38分（常模临界值15分），解离性体验显著。MMPI-2显示D（抑郁）与Sc（精神分裂）量表升高，符合解离谱系特征。家属补充：近半年来“苏晚晴”偶尔表现得异常冷静或情绪极端化，自称“另一个人”，但事后否认。
+            </div>
+        </div>
+
+        <!-- 诊断核心 -->
+        <div class="diagnosis">
+            <strong>诊断意见 (DSM-5)</strong><br>
+            <strong>解离性身份障碍 (Dissociative Identity Disorder, DID)</strong><br>
+            编码：300.14 (F44.81)<br>
+            特征：存在两个或以上截然不同的人格状态，伴随反复的记忆空白，无法用普通健忘解释。目前识别出至少两个交替身份：主人格“苏晚晴”与一个代号“K”的亚人格，后者具有更理性、决断的特征。
+        </div>
+
+        <!-- 临床建议 -->
+        <div class="section">
+            <div class="section-title">临床建议</div>
+            <div class="text-block">
+                1. 长期整合性心理治疗，以稳定身份认同为核心目标。<br>
+                2. 建议定期精神科复诊，监测情绪波动及自杀风险。<br>
+                3. 家属需学习解离症支持策略，避免对人格切换的强烈否定。<br>
+                4. 暂不建议重大生活变动，保持安全、可预测的环境。
+            </div>
+        </div>
+
+        <!-- 签名栏 -->
+        <div class="signature">
+            <div>
+                评估医师：<br>
+                陈敏华 主治医师<br>
+                <div class="sign-line" style="width: 160px;"></div>
+                签名日期：2019年4月15日
+            </div>
+            <div>
+                审核：<br>
+                林国栋 副主任医师<br>
+                <div class="sign-line" style="width: 160px;"></div>
+                审核日期：2019年4月16日
+            </div>
+        </div>
+
+        <!-- 底部声明 -->
+        <div class="footer-note">
+            * 本报告仅供临床参考，请妥善保管。未经授权不得复印或外传。<br>
+            南京市精神卫生中心 · 临床心理科 制
+        </div>
+    </div>
+</div>
+</body>
+</html>

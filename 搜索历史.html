@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>gooooleee · 搜索历史</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f2f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Roboto, sans-serif;
+            padding: 32px 20px;
+            color: #1c1c1e;
+        }
+
+        /* 主容器 - iOS卡片风格 */
+        .history-container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        /* 头部：gooooleee 极简logo */
+        .header {
+            padding: 28px 24px 16px;
+            border-bottom: 1px solid #f0f0f2;
+            text-align: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: #1c1c1e;
+            font-family: inherit;
+        }
+        .logo span {
+            color: #007aff;
+            font-weight: 500;
+        }
+        .sub {
+            font-size: 0.7rem;
+            color: #8e8e93;
+            margin-top: 6px;
+        }
+
+        /* 搜索栏模拟 */
+        .search-bar {
+            padding: 12px 24px;
+            background: #ffffff;
+        }
+        .search-input {
+            background: #f5f5f7;
+            border-radius: 28px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            color: #8e8e93;
+            border: 0.5px solid #e9e9ef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-icon {
+            font-size: 1rem;
+            color: #8e8e93;
+        }
+        .search-input span {
+            flex: 1;
+        }
+
+        /* 历史列表 */
+        .history-list {
+            padding: 8px 0 20px;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            border-bottom: 0.5px solid #f0f0f2;
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+        .history-item:hover {
+            background: #f9f9fb;
+        }
+        .history-icon {
+            width: 36px;
+            font-size: 1.2rem;
+            color: #007aff;
+            margin-right: 14px;
+        }
+        .history-content {
+            flex: 1;
+        }
+        .history-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1c1c1e;
+            margin-bottom: 4px;
+        }
+        .history-url {
+            font-size: 0.7rem;
+            color: #8e8e93;
+            font-family: monospace;
+        }
+        .history-time {
+            font-size: 0.7rem;
+            color: #aeaeb2;
+            margin-left: 12px;
+            white-space: nowrap;
+        }
+
+        /* 弹窗模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: 28px;
+            width: 340px;
+            max-width: 85vw;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalPop 0.2s ease;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 20px 24px 12px;
+            border-bottom: 0.5px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #aeaeb2;
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-modal:hover {
+            background: #f2f2f6;
+        }
+        .modal-body {
+            padding: 20px 24px 28px;
+        }
+        .simple-message {
+            text-align: center;
+            padding: 16px;
+            color: #5e5e66;
+        }
+
+        /* 底部 */
+        .footer-note {
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #aeaeb2;
+            border-top: 0.5px solid #f0f0f2;
+        }
+
+        @media (max-width: 560px) {
+            .history-item {
+                padding: 12px 20px;
+            }
+            .history-time {
+                font-size: 0.6rem;
+            }
+            .history-title {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="history-container">
+    <div class="header">
+        <div class="logo">gooo<span>o</span>leee</div>
+        <div class="sub">搜索历史 · 私密浏览</div>
+    </div>
+    <div class="search-bar">
+        <div class="search-input">
+            <span class="search-icon">🔍</span>
+            <span>搜索历史记录</span>
+        </div>
+    </div>
+
+    <div class="history-list">
+        <!-- 新增：闲鱼-二手交易平台，点击跳转到新标签页闲鱼.html -->
+        <div class="history-item" data-type="xianyu">
+            <div class="history-icon">🛍️</div>
+            <div class="history-content">
+                <div class="history-title">闲鱼 · 二手交易平台</div>
+                <div class="history-url">https://www.goofish.com/</div>
+            </div>
+            <div class="history-time">2月3日</div>
+        </div>
+
+        <!-- 如何注销社保 -->
+        <div class="history-item" data-type="social">
+            <div class="history-icon">📄</div>
+            <div class="history-content">
+                <div class="history-title">如何注销社保账户？需要哪些材料</div>
+                <div class="history-url">https://www.ssa.gov/cancel-guide</div>
+            </div>
+            <div class="history-time">2月28日</div>
+        </div>
+
+        <!-- 人最多能多久不和任何人说话 -->
+        <div class="history-item" data-type="loneliness">
+            <div class="history-icon">🧠</div>
+            <div class="history-content">
+                <div class="history-title">人最多能多久不和任何人说话？完全隔离实验记录</div>
+                <div class="history-url">https://www.psychologytoday.com/silence-study</div>
+            </div>
+            <div class="history-time">1月20日</div>
+        </div>
+
+        <!-- 完全孤独的生存实验 -->
+        <div class="history-item" data-type="solitude">
+            <div class="history-icon">🌌</div>
+            <div class="history-content">
+                <div class="history-title">完全孤独的生存实验 · 人类极限探究</div>
+                <div class="history-url">https://www.scientificamerican.com/solitude-experiment</div>
+            </div>
+            <div class="history-time">1月20日</div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        仅展示最近记录 · 清空历史需点击右上角“···”
+    </div>
+</div>
+
+<!-- 弹窗模态框 -->
+<div id="infoModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">详细信息</h3>
+            <button class="close-modal" id="closeModalBtn">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- 动态内容 -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // 其他条目的提示内容
+    const otherMessages = {
+        social: {
+            title: "关于注销社保",
+            content: "注销社保账户需本人携带身份证、社保卡至参保地社保局办理，部分地区支持线上申请。详细流程可咨询12333。"
+        },
+        loneliness: {
+            title: "关于人类孤独极限",
+            content: "科学研究表明，完全隔离状态下，人类通常无法忍受超过15天的绝对孤独，长期隔离可能导致心理创伤。但个体差异极大。"
+        },
+        solitude: {
+            title: "完全孤独的生存实验",
+            content: "历史上曾有洞穴隔离实验（如Mauro Prosperi），最长的自愿隔离记录约130天，但被试均出现严重心理症状。"
+        }
+    };
+
+    function showSimpleMessage(type) {
+        const msg = otherMessages[type];
+        if (msg) {
+            modalTitle.innerText = msg.title;
+            modalBody.innerHTML = `<div class="simple-message">${msg.content}</div>`;
+        } else {
+            modalTitle.innerText = "搜索记录";
+            modalBody.innerHTML = `<div class="simple-message">暂无更多详情。</div>`;
+        }
+        modal.classList.add('active');
+    }
+
+    // 绑定点击事件
+    const items = document.querySelectorAll('.history-item');
+    items.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const type = item.getAttribute('data-type');
+            if (type === 'xianyu') {
+                // 新标签页打开闲鱼.html
+                window.open('闲鱼.html', '_blank');
+            } else if (type === 'social') {
+                showSimpleMessage('social');
+            } else if (type === 'loneliness') {
+                showSimpleMessage('loneliness');
+            } else if (type === 'solitude') {
+                showSimpleMessage('solitude');
+            }
+        });
+    });
+
+    // 关闭弹窗
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+</script>
+</body>
+</html>

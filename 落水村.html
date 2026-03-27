@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>落水村 · 手绘地图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f0;
+            font-family: 'Segoe UI', 'Helvetica Neue', 'Georgia', serif;
+            padding: 20px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .map-container {
+            max-width: 700px;
+            width: 100%;
+            background: #fffef7;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            padding: 18px 18px 16px;
+            border: 1px solid #e2dbc8;
+        }
+
+        .map-header {
+            text-align: center;
+            margin-bottom: 14px;
+            border-bottom: 2px dashed #d4c8ae;
+            padding-bottom: 8px;
+        }
+        .map-header h1 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #4a6741;
+            letter-spacing: 1px;
+        }
+        .map-header p {
+            font-size: 0.65rem;
+            color: #8b9a7b;
+            margin-top: 4px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #fefaf0;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e6ddce;
+            font-size: 0.6rem;
+            color: #6c7a5e;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-marker {
+            width: 10px;
+            height: 10px;
+            background: #b88b4a;
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px #fff0cf;
+        }
+
+        .info-panel {
+            margin-top: 16px;
+            background: #faf7ef;
+            border-radius: 18px;
+            padding: 10px 16px;
+            font-size: 0.75rem;
+            color: #5a4a32;
+            text-align: center;
+            border: 1px solid #e8ddca;
+        }
+        .info-panel strong {
+            color: #b87c4a;
+        }
+
+        /* 模态框通用样式 (尺寸不变，保持易读性) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-card {
+            background: #fffef7;
+            border-radius: 28px;
+            width: 360px;
+            max-width: 85vw;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: modalPop 0.2s ease;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 14px 20px;
+            background: #f4efe4;
+            border-bottom: 1px solid #e2d5c4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5a4a32;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #a2845a;
+        }
+        .modal-body {
+            padding: 20px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #3a2e22;
+        }
+        .password-hint {
+            font-size: 0.65rem;
+            color: #a2845a;
+            margin-bottom: 8px;
+        }
+        .password-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2d5c4;
+            border-radius: 40px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .password-input::placeholder {
+            color: #cccbc0;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            justify-content: center;
+        }
+        .btn {
+            background: #e2d5c4;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: 0.1s;
+        }
+        .btn-primary {
+            background: #b88b4a;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #9e6e3a;
+        }
+        .item-list {
+            background: #fefaf0;
+            border-radius: 18px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            border-left: 3px solid #b88b4a;
+        }
+        .item-list p {
+            margin: 5px 0;
+        }
+        .final-choice {
+            font-size: 0.65rem;
+            color: #b68b5a;
+            margin-top: 6px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+<div class="map-container">
+    <div class="map-header">
+        <h1>🗺️ 落水村 · 手绘导览</h1>
+        <p>泸沽湖畔 · 摩梭人家</p>
+    </div>
+
+    <canvas id="villageMap" width="900" height="630" style="width:100%; height:auto; background:#fefaf0;"></canvas>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-marker"></div><span>主要地点</span></div>
+        <div class="legend-item"><span>—— 主路</span></div>
+        <div class="legend-item"><span>⋯ 小径</span></div>
+    </div>
+    <div class="info-panel" id="infoPanel">
+        💡 点击地图上的任意地点，查看详细介绍
+    </div>
+</div>
+
+<!-- 通用模态框 -->
+<div id="universalModal" class="modal-overlay">
+    <div class="modal-card" id="modalContent">
+        <!-- 动态填充 -->
+    </div>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('villageMap');
+        const ctx = canvas.getContext('2d');
+        const width = 900, height = 630;
+        canvas.width = width;
+        canvas.height = height;
+
+        // 地点数据
+        const locations = [
+            { 
+                id: "grayhorse", 
+                name: "灰马院子", 
+                x: 340, y: 280,
+                desc: "摩梭传统院落，青瓦木墙，院内有一匹灰马石雕。传说这里是村里最古老的住所，如今提供简单的住宿与茶饮，主人会讲述泸沽湖的故事。",
+                customAction: true
+            },
+            { 
+                id: "pier", 
+                name: "落水码头", 
+                x: 720, y: 440,
+                desc: "猪槽船码头，清晨可乘船看日出，湖面常有海鸥。从这里出发可以抵达里务比岛。"
+            },
+            { 
+                id: "azuoShop", 
+                name: "阿措杂货铺", 
+                x: 460, y: 380,
+                desc: "村中唯一的杂货铺，售卖日用品、摩梭手工织品。店主知道许多关于“消失者”的故事。"
+            },
+            { 
+                id: "goddessView", 
+                name: "女神山观景台", 
+                x: 180, y: 120,
+                desc: "位于村后山坡，可俯瞰整个落水村和泸沽湖。傍晚时分常有摄影爱好者守候日落。"
+            },
+            { 
+                id: "mosuoHomestay", 
+                name: "摩梭家访点", 
+                x: 560, y: 210,
+                desc: "摩梭人家开放参观，可以品尝酥油茶、了解母系家庭文化，聆听走婚习俗的讲解。"
+            },
+            { 
+                id: "lakesideInn", 
+                name: "湖畔客栈", 
+                x: 780, y: 300,
+                desc: "临湖而建的木屋客栈，推开窗即是泸沽湖。许多旅人选择在此长住，感受湖居慢生活。"
+            },
+            { 
+                id: "walnutTree", 
+                name: "核桃树", 
+                x: 520, y: 470,
+                desc: "村口的老核桃树，树龄逾百年，枝叶繁茂。树下有一块平整的青石板。",
+                customAction: true
+            }
+        ];
+
+        // 绘制地图（坐标不变）
+        function drawMap() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = "#fefaf0";
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = "#e0d5be";
+            ctx.lineWidth = 0.6;
+            for (let i = 0; i < width; i += 40) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+            
+            ctx.fillStyle = "#cfe3e0";
+            ctx.beginPath();
+            ctx.moveTo(650, 400);
+            ctx.lineTo(width, 400);
+            ctx.lineTo(width, height);
+            ctx.lineTo(600, height);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.strokeStyle = "#aac9c4";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 8; i++) {
+                let y = 430 + i * 15;
+                ctx.beginPath();
+                ctx.moveTo(670, y);
+                ctx.quadraticCurveTo(740, y-5, 820, y+2);
+                ctx.stroke();
+            }
+            
+            ctx.beginPath();
+            ctx.strokeStyle = "#cbbd96";
+            ctx.lineWidth = 4;
+            ctx.setLineDash([8, 12]);
+            ctx.moveTo(720, 440);
+            ctx.lineTo(600, 400);
+            ctx.lineTo(480, 380);
+            ctx.lineTo(340, 280);
+            ctx.lineTo(240, 200);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(480, 380);
+            ctx.lineTo(560, 210);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(600, 400);
+            ctx.lineTo(780, 300);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(340, 280);
+            ctx.lineTo(180, 120);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(520, 470);
+            ctx.lineTo(460, 380);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(520, 470);
+            ctx.lineTo(620, 450);
+            ctx.stroke();
+            
+            ctx.setLineDash([4, 6]);
+            ctx.beginPath();
+            ctx.moveTo(560, 210);
+            ctx.lineTo(460, 260);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(780, 300);
+            ctx.lineTo(860, 340);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            locations.forEach(loc => {
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 12, 0, 2 * Math.PI);
+                ctx.fillStyle = "#b88b4a";
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = "#fef0d8";
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = "#4a3a22";
+                ctx.fill();
+                
+                ctx.font = "12px 'Segoe UI', 'Helvetica Neue', sans-serif";
+                const textWidth = ctx.measureText(loc.name).width;
+                ctx.fillStyle = "#fff9ef";
+                ctx.fillRect(loc.x - textWidth/2 - 6, loc.y - 26, textWidth + 12, 18);
+                ctx.fillStyle = "#5c4b2e";
+                ctx.fillText(loc.name, loc.x - textWidth/2, loc.y - 18);
+            });
+            
+            ctx.fillStyle = "#8faa6e";
+            for (let i = 0; i < 30; i++) {
+                let x = 50 + Math.random() * 200;
+                let y = 500 + Math.random() * 100;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x-4, y-12);
+                ctx.lineTo(x+4, y-12);
+                ctx.fill();
+            }
+            ctx.fillStyle = "#b3c18a";
+            for (let i = 0; i < 20; i++) {
+                let x = 780 + Math.random() * 80;
+                let y = 550 + Math.random() * 60;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x-3, y-10);
+                ctx.lineTo(x+3, y-10);
+                ctx.fill();
+            }
+        }
+        
+        function findLocationByClick(clickX, clickY) {
+            for (let loc of locations) {
+                const dx = clickX - loc.x;
+                const dy = clickY - loc.y;
+                if (Math.sqrt(dx*dx + dy*dy) <= 20) return loc;
+            }
+            return null;
+        }
+        
+        function showLocationInfo(loc) {
+            const panel = document.getElementById('infoPanel');
+            panel.innerHTML = `<strong>📍 ${loc.name}</strong><br>${loc.desc}`;
+        }
+        
+        function resetInfoPanel() {
+            document.getElementById('infoPanel').innerHTML = `💡 点击地图上的任意地点，查看详细介绍`;
+        }
+        
+        const modalOverlay = document.getElementById('universalModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        function openModal(contentHtml) {
+            modalContent.innerHTML = contentHtml;
+            modalOverlay.classList.add('active');
+        }
+        
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+        
+        function showGrayHorseModal() {
+            const html = `
+                <div class="modal-header">
+                    <h3>🐎 灰马院子</h3>
+                    <button class="close-modal" onclick="window.closeModalFromGlobal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: 8px;">好像看到一个熟悉的人影</p>
+                    <div class="final-choice">✨ 最终抉择 ✨</div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="approachBtn">靠近</button>
+                        <button class="btn" id="leaveBtn">离开</button>
+                    </div>
+                </div>
+            `;
+            openModal(html);
+            document.getElementById('approachBtn')?.addEventListener('click', () => {
+                window.open('湖底之人.html', '_blank');
+                closeModal();
+            });
+            document.getElementById('leaveBtn')?.addEventListener('click', () => {
+                window.open('到此为止.html', '_blank');
+                closeModal();
+            });
+        }
+        
+        function showWalnutModal() {
+            const html = `
+                <div class="modal-header">
+                    <h3>🌰 核桃树下</h3>
+                    <button class="close-modal" onclick="window.closeModalFromGlobal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p>在树下发现一个铁盒，上面有密码锁。</p>
+                    <div class="password-hint">🔑 密码提示：再也回不去的地方</div>
+                    <input type="password" id="passwordInput" class="password-input" placeholder="****" autocomplete="off">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="unlockBtn">解锁</button>
+                        <button class="btn" id="cancelBtn">取消</button>
+                    </div>
+                    <div id="unlockResult"></div>
+                </div>
+            `;
+            openModal(html);
+            
+            const unlockBtn = document.getElementById('unlockBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const pwdInput = document.getElementById('passwordInput');
+            const resultDiv = document.getElementById('unlockResult');
+            
+            unlockBtn.addEventListener('click', () => {
+                const entered = pwdInput.value.trim();
+                if (entered === "1703") {
+                    resultDiv.innerHTML = `
+                        <div class="item-list">
+                            <p>旧身份证</p>
+                            <p>社保卡</p>
+                            <p>银行卡</p>
+                            <p>深蓝科技工牌</p>
+                            <p>饺子的一撮毛</p>
+                            <p>铜钱</p>
+                            <p>一张纸条：“妈，这个还给你。小时候你挂在我书包上，说保平安。现在我不需要了。我很平安。你也平安。”</p>
+                        </div>
+                        <div class="btn-group" style="margin-top: 12px;">
+                            <button class="btn" id="closeResultBtn">关闭</button>
+                        </div>
+                    `;
+                    document.getElementById('closeResultBtn')?.addEventListener('click', () => closeModal());
+                    pwdInput.disabled = true;
+                    unlockBtn.disabled = true;
+                } else {
+                    resultDiv.innerHTML = '<p style="color:#c45a4a;">密码错误，打不开铁盒。</p>';
+                    setTimeout(() => { resultDiv.innerHTML = ''; }, 1500);
+                }
+            });
+            cancelBtn.addEventListener('click', () => closeModal());
+        }
+        
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+            if (canvasX >= 0 && canvasX <= width && canvasY >= 0 && canvasY <= height) {
+                const loc = findLocationByClick(canvasX, canvasY);
+                if (loc) {
+                    if (loc.id === "grayhorse") showGrayHorseModal();
+                    else if (loc.id === "walnutTree") showWalnutModal();
+                    else showLocationInfo(loc);
+                } else resetInfoPanel();
+            }
+        }
+        
+        window.closeModalFromGlobal = function() { closeModal(); };
+        
+        drawMap();
+        canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCanvasClick(e); });
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+    })();
+</script>
+</body>
+</html>
