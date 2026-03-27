@@ -167,17 +167,16 @@
         function performSearch() {
             let keyword = searchInput.value.trim();
             if (keyword === "") {
-                alert("请输入搜索内容");
+                // 空输入无反应
                 return;
             }
             
-            // 查找映射
+            // 查找映射，存在则打开，否则无反应（不提示）
             let targetUrl = urlMap[keyword];
             if (targetUrl) {
                 window.open(targetUrl, '_blank');
-            } else {
-                alert(`未找到“${keyword}”对应的站点，请尝试：闲鱼、深蓝科技、无名人小镇、小蜗宠物生活馆`);
             }
+            // 未匹配时什么都不做
         }
 
         // 绑定事件
