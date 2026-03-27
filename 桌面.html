@@ -26,6 +26,9 @@
             background: url('https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop') no-repeat center center;
             background-size: cover;
             position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
         }
 
         .desktop::before {
@@ -39,21 +42,22 @@
             pointer-events: none;
         }
 
+        /* 图标网格：水平流式布局，自动换行 */
         .icons-grid {
-            position: absolute;
-            top: 32px;
-            left: 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
+            position: relative;
             z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            padding: 32px 28px;
+            max-width: 100%;
         }
 
         .desktop-icon {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 76px;
+            width: 80px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             border-radius: 18px;
@@ -113,6 +117,7 @@
             letter-spacing: 0.2px;
         }
 
+        /* 模态框样式保持不变 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -265,7 +270,6 @@
         .receipt-value {
             flex: 1;
         }
-        /* 全屏信纸样式 */
         .fullscreen-letter {
             position: fixed;
             top: 0;
@@ -343,7 +347,6 @@
         .back-btn:hover {
             background: rgba(0,0,0,0.8);
         }
-        /* 确保内容高度适应无滚动条 */
         @media (max-width: 680px) {
             .letter-paper-full {
                 padding: 24px 28px;
@@ -352,7 +355,6 @@
                 background-size: 100% 26px;
             }
         }
-        /* 备忘录居中样式 */
         .centered-note {
             text-align: center;
             font-family: 'Courier New', monospace;
@@ -386,6 +388,27 @@
         }
         .disabled-item:hover {
             text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .icons-grid {
+                gap: 20px;
+                padding: 20px;
+            }
+            .desktop-icon {
+                width: 70px;
+            }
+            .icon-circle {
+                width: 50px;
+                height: 50px;
+            }
+            .icon-svg {
+                width: 24px;
+                height: 24px;
+            }
+            .icon-label {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
         }
     </style>
 </head>
@@ -468,7 +491,7 @@
     </div>
 </div>
 
-<!-- 通用模态框（仅用于邮箱登录、加密文件夹解锁等） -->
+<!-- 通用模态框 -->
 <div id="globalModal" class="modal-overlay">
     <div class="modal-card" id="modalContent"></div>
 </div>
@@ -549,7 +572,6 @@
 好。就叫小满。<br>
 苏晚晴，谢谢你保护了我二十七年。现在你可以休息了。我来。`;
             showFullscreenLetter("小满的来历", content, () => {
-                // 返回时重新显示加密文件夹内容
                 showFolderContentModal();
             });
             closeModal();
@@ -573,9 +595,8 @@
         window.open('搜索.html', '_blank');
     });
 
-    // 邮箱登录（自动填充已存储账号）
+    // 邮箱登录
     document.getElementById('mailIcon').addEventListener('click', () => {
-        // 检查是否已登录过
         const saved = localStorage.getItem('email_logged_in');
         const loginHtml = `
             <div class="modal-header">
@@ -607,14 +628,13 @@
         });
     });
 
-    // 加密文件夹：如果已经解锁过，直接显示内容
+    // 加密文件夹
     document.getElementById('folderIcon').addEventListener('click', () => {
         const unlocked = localStorage.getItem('folder_unlocked');
         if (unlocked === 'true') {
             showFolderContentModal();
             return;
         }
-        // 未解锁，显示密码框
         const passwordHtml = `
             <div class="modal-header">
                 <h3>加密文件夹</h3>
@@ -644,7 +664,7 @@
         });
     });
 
-    // 图片（寄养回执单）
+    // 图片
     document.getElementById('imageIcon').addEventListener('click', () => {
         const receiptHtml = `
             <div class="modal-header">
@@ -704,7 +724,7 @@
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
     });
 
-    // 回收站
+    // 回收站 - 修改“检查报告”为“医院心理检查”，链接改为“医院心理检查.html”
     document.getElementById('trashIcon').addEventListener('click', () => {
         const trashHtml = `
             <div class="modal-header">
@@ -715,7 +735,7 @@
                 <ul class="trash-list">
                     <li><span class="disabled-item">消失计划.docx</span> <span style="color:#888;">(不可恢复)</span></li>
                     <li><span class="disabled-item">与K的聊天记录备份</span> <span style="color:#888;">(不可恢复)</span></li>
-                    <li><span id="reportLink">检查报告</span> <span style="color:#ffaa88;">可恢复</span></li>
+                    <li><span id="reportLink">医院心理检查</span> <span style="color:#ffaa88;">可恢复</span></li>
                 </ul>
             </div>
         `;
@@ -727,7 +747,7 @@
             reportLink.style.cursor = 'pointer';
             reportLink.style.color = '#ffaa88';
             reportLink.addEventListener('click', () => {
-                window.open('心理评估报告.html', '_blank');
+                window.open('医院心理检查.html', '_blank');
             });
         }
     });
