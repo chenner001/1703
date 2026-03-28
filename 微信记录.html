@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>微信 · 苏晚晴的对话</title>
     <style>
         * {
@@ -19,12 +19,14 @@
             align-items: center;
             min-height: 100vh;
             font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, 'Microsoft YaHei', sans-serif;
-            padding: 20px;
+            padding: 16px;
         }
 
         .wechat-window {
-            width: 1100px;
-            height: 720px;
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            min-height: 500px;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -39,6 +41,7 @@
             border-right: 1px solid #e5e5e5;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
 
         .profile {
@@ -121,19 +124,24 @@
             font-weight: bold;
             color: white;
             margin-right: 12px;
+            flex-shrink: 0;
         }
         .chat-info {
             flex: 1;
+            min-width: 0;
         }
         .chat-name {
             font-size: 15px;
             font-weight: 500;
             display: flex;
             justify-content: space-between;
+            align-items: baseline;
         }
         .chat-time {
             font-size: 11px;
             color: #aaa;
+            flex-shrink: 0;
+            margin-left: 8px;
         }
         .chat-preview {
             font-size: 12px;
@@ -142,7 +150,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            width: 160px;
         }
         .unread-badge {
             background: #fa5151;
@@ -152,6 +159,7 @@
             font-size: 10px;
             line-height: 16px;
             margin-left: 6px;
+            display: inline-block;
         }
 
         .main-area {
@@ -159,6 +167,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow: hidden;
         }
 
         .chat-header {
@@ -297,6 +306,7 @@
             justify-content: center;
             font-weight: bold;
             color: white;
+            flex-shrink: 0;
         }
         .moment-content {
             flex: 1;
@@ -310,6 +320,7 @@
             font-size: 14px;
             line-height: 1.4;
             margin-bottom: 8px;
+            word-break: break-word;
         }
         .moment-time {
             font-size: 11px;
@@ -343,6 +354,64 @@
         }
         .moments-btn:hover {
             background: #e5e5e5;
+        }
+
+        @media (max-width: 760px) {
+            .sidebar {
+                width: 240px;
+            }
+            .profile {
+                padding: 16px 12px;
+            }
+            .chat-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .chat-name {
+                font-size: 14px;
+            }
+            .chat-time {
+                font-size: 10px;
+            }
+            .chat-preview {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 200px;
+            }
+            .profile {
+                padding: 12px 10px;
+            }
+            .chat-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+                margin-right: 8px;
+            }
+            .chat-name {
+                font-size: 13px;
+            }
+            .chat-preview {
+                font-size: 10px;
+            }
+            .message {
+                max-width: 90%;
+            }
+            .bubble {
+                font-size: 13px;
+            }
+            .input-box {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+            .send-btn {
+                padding: 4px 14px;
+                font-size: 13px;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -405,7 +474,7 @@
 </div>
 
 <script>
-    // 联系人数据（包含所有联系人，爸爸在最下面）
+    // 联系人数据
     const contacts = [
         {
             id: "mom",
@@ -522,7 +591,7 @@
         }
     ];
 
-    // 朋友圈数据（包含新增的余诗恒生日朋友圈，修改李诗雨和王磊为生活记录，增加他们各自的生活内容）
+    // 朋友圈数据（已删除余诗恒“祝妈妈生日快乐”那条）
     let momentsDataRaw = [
         {
             id: "mom",
@@ -550,15 +619,6 @@
             content: "公司Q1产品规划会，感谢产品部的辛勤付出。晚晴的项目尤其亮眼，希望她一切都好。",
             time: "2025年3月10日 16:30",
             timestamp: new Date(2025, 2, 10, 16, 30).getTime()
-        },
-        {
-            id: "yu",
-            name: "余诗恒",
-            avatarBg: "#3b7cbf",
-            avatarText: "余",
-            content: "祝亲爱的妈妈生日快乐！愿您健康平安，笑容常在❤️",
-            time: "2024年7月15日 09:48",
-            timestamp: new Date(2024, 6, 15, 9, 48).getTime()
         },
         {
             id: "li",
@@ -614,13 +674,11 @@
     let fatherMsgCount = 0;
     let fatherAutoReplied = false;
 
-    // 辅助函数：更新每个联系人的最后一条消息摘要（确保左侧显示最新消息）
     function updateAllLastMsg() {
         contacts.forEach(contact => {
             if (contact.messages && contact.messages.length > 0) {
                 const lastMsgObj = contact.messages[contact.messages.length - 1];
                 contact.lastMsg = lastMsgObj.text;
-                // 格式化时间，只取月日
                 const datePart = lastMsgObj.time.split(' ')[0].slice(5);
                 contact.lastTime = datePart;
             } else {
@@ -629,9 +687,8 @@
             }
         });
     }
-    updateAllLastMsg(); // 初始化
+    updateAllLastMsg();
 
-    // 渲染左侧聊天列表
     function renderChatList() {
         const container = document.getElementById('chatList');
         container.innerHTML = '';
@@ -728,7 +785,6 @@
         };
         if (!currentContact.messages) currentContact.messages = [];
         currentContact.messages.push(newMsg);
-        // 更新摘要
         currentContact.lastMsg = text;
         currentContact.lastTime = new Date().toLocaleDateString().slice(5);
         renderChatList();
@@ -749,11 +805,8 @@
                 currentContact.lastTime = autoReply.time.slice(5,10);
                 renderChatList();
                 renderMessageArea();
-                const area = document.getElementById('messageArea');
-                if (area) area.scrollTop = area.scrollHeight;
             }
         }
-
         inputBox.value = '';
     }
 
